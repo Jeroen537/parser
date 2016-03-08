@@ -4,23 +4,20 @@ from sparqlparser.grammar import *
 from sparqlparser.grammar import stripComments
 from sparqlparser.grammar_functest import printResults
 
-s = "test / test / test"
+s = '''
+PREFIX ns: http://ds.tno.nl
+PREFIX foaf: http://xmlns.com/foaf/0.1/
 
-p = separatedList(Word(alphas), delim='/')
-
-r = p.parseString(s)
-
-print(r)
-
-print(type(r))
-
-s = 'a ? / ^ ! ( ^ <testIri> | ^ <testIri> )'
-
-r = PathSequence(s)
-
-# r.render()
-# 
-# print(r.dump()) 
-
-l = ['a ? / ^ ! ( ^ <testIri> | ^ <testIri> ) | a ? / ^ ! ( ^ <testIri> | ^ <testIri> )']
-printResults(l, 'PathAlternative', dump=True)  
+SELECT ?p ?t WHERE 
+{
+?p a foaf:Person .
+?p ns:hasTemp ?t .
+?p ns:hasAge ?a .
+?t a ns:TempInC .
+FILTER ( (datatype(?t) = xsd:float) &&
+( ?t > 37.0 ) &&
+( ?a < 37.0 ) 
+).
+}
+'''
+parseQuery(s)

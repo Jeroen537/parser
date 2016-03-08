@@ -1,3 +1,0 @@
-Interne aanpassing
-
-INTERN: duplicaten verwijderd uit pattern-lijst in classify.py

@@ -433,8 +433,6 @@ if __name__ == '__main__':
     
     parser = makeAndConnectParser(patterns)
     
-    from pprint import pprint
-#     pprint(parser.__dict__)
     print(len(parser.__dict__))
     
     pnames = [p.name for p in patterns]

@@ -48,7 +48,8 @@ def parseQuery(querystring):
     except ParseException:
         try:
             result = UpdateUnit(s)
-        except ParseException:
+        except ParseException as e:
+            print(e)
             raise SparqlParserException('Query {} cannot be parsed'.format(querystring))
     assert checkQueryResult(result), 'Fault in postprocessing query {}'.format(querystring)
     return result
@@ -1478,7 +1479,7 @@ if do_parseactions: TriplesNodePath_p.setName('TriplesNodePath').setParseAction(
 # [105]   GraphNodePath     ::=   VarOrTerm | TriplesNodePath 
 GraphNodePath_p = Group(VarOrTerm_p ^ TriplesNodePath_p)
 class GraphNodePath(ParseInfo): pass
-if do_parseactions: GraphNodePath_p.setName('GraphNodePath').setParseAction(parseInfoFunc((TriplesNodePath)))
+if do_parseactions: GraphNodePath_p.setName('GraphNodePath').setParseAction(parseInfoFunc((GraphNodePath)))
 
 TriplesNode_p = Forward()
 class TriplesNode(ParseInfo): pass

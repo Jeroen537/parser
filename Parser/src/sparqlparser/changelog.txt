@@ -1,3 +1,2 @@
-INTERN: Class "punctuation" toegevoegd met interpunctie, d.w.z (){}[].,; als instances
-INTERN: Alle subclasses van ParseInfo erven nu dezelfde __str__ / render() code van ParseInfo. Er is geen wezenlijk onderscheid meer tussen Operator, Keyword, Punctuation, Terminal en NonTerminal.
-INTERN: Werkdocument "patterns.py" gecreeerd, ter voorbereiding op refactoring van .grammar in .base en .grammar
+INTERN: consistentie-verbeteringen aan grammar; alle producties hebben nu een naam
+INTERN: patternnames.py gevalideerd en werkt nu samen met grammar

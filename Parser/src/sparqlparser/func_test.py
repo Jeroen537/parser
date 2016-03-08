@@ -143,7 +143,7 @@ s_dump = '''
 |  [LPAR] /(/
 |  |  (
 |  > distinct:
-|  [DISTINCT_kw] /DISTINCT/
+|  [DISTINCT] /DISTINCT/
 |  |  DISTINCT
 |  > argument:
 |  [Expression] /"*Expression*"/

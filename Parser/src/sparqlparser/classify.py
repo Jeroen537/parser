@@ -7,67 +7,442 @@ Created on 4 mrt. 2016
 from sparqlparser.grammar import *
 from sparqlparser.rules import *
 
-class Operators:
-    pass
-
-class Keywords:
-    pass
-
-class Terminals:
-    pass
-
-class NonTerminals:
-    VarOrIri = Group(Var_p | iri_p).setName('VarOrIri')
     
-
-    
-def makeParser(operatorClass, keywordClass, terminalClass, nonterminalClass):
+def makeAndConnectParser(patterns):
+    '''Creates a parser from a list of patterns. Such a list can e.g. be generated from a BNF grammar.
+    The parser returned has attributes for every pattern in the list. This attribute is a subclass of ParseInfo that can be used
+    to parse, render, etc. a valid expression for that pattern.
+    As a side effect, the method sets the parseaction for the pattern to be that class. 
+    Note that this implies that the patterns in the calling module get changed.'''
      
-    def classify(wrappedPattern, token_class):
-        result = type(wrappedPattern[0].name, (token_class,), {'pattern': wrappedPattern[0]})
+    def classify(wrappedPattern):
+        result = type(wrappedPattern[0].name, (ParseInfo,), {'pattern': wrappedPattern[0]})
         wrappedPattern[0].setParseAction(parseInfoFunc(result))
         return result     
              
     class _parser: pass
      
     parser = _parser()
-     
-    operatorNames = [o for o in operatorClass.__dict__ if not o.startswith('__')]
-    keywordNames = [o for o in keywordClass.__dict__ if not o.startswith('__')]
-    terminalNames = [o for o in terminalClass.__dict__ if not o.startswith('__')]
-    nonterminalNames = [o for o in nonterminalClass.__dict__ if not o.startswith('__')]
-     
-    for o in operatorNames:
-        pass
-    for o in keywordNames:
-        pass
-    for o in terminalNames:
-        pass
-    for o in nonterminalNames:
-        setattr(parser, o, classify([nonterminalClass.__dict__[o]], NonTerminal_))
+    print('about to classify')
+    for p in patterns:
+        print('classifying', p.name)
+        setattr(parser, p.name, classify([p]))
          
     return parser
-        
-print('making parser')
-parser = makeParser(Operators, Keywords, Terminals, NonTerminals)
-print()
-
-# VarOrIri_p = Group(Var_p | iri_p).setName('VarOrIri')
-# class VarOrIri(NonTerminal_): pass
-# if do_parseactions: VarOrIri_p.setName('VarOrIri').setParseAction(parseInfoFunc((VarOrIri)))
 
 
- 
-new_class = parser.VarOrIri
-  
-l = '$algebra', '<test>', 'az:Xy'
-  
-for s in l:    
-    r1 = new_class(s)
-    print(r1.dump())
-    print('en nu parseString:\n')
-    r2 = VarOrIri(s)
-    print(r2.dump())
-
-    assert r1.items == r2.items
-    print(type(r1), type(r2))
+if __name__ == '__main__':
+            
+    patterns = [LPAR_p,
+            RPAR_p,
+            LBRACK_p,
+            RBRACK_p,
+            LCURL_p,
+            RCURL_p,
+            SEMICOL_p,
+            PERIOD_p,
+            COMMA_p,
+            NEGATE_p,
+            PLUS_p,
+            MINUS_p,
+            TIMES_p,
+            DIV_p,
+            EQ_p,
+            NE_p,
+            GT_p,
+            LT_p,
+            GE_p,
+            LE_p,
+            AND_p,
+            OR_p,
+            INVERSE_p,
+            ALL_VALUES_p,
+            TYPE_p,
+            DISTINCT_p,
+            COUNT_p,
+            SUM_p,
+            MIN_p,
+            MAX_p,
+            AVG_p,
+            SAMPLE_p,
+            GROUP_CONCAT_p,
+            SEPARATOR_p,
+            NOT_p,
+            EXISTS_p,
+            NOT_EXISTS_p,
+            REPLACE_p,
+            SUBSTR_p,
+            REGEX_p,
+            STR_p,
+            LANG_p,
+            LANGMATCHES_p,
+            DATATYPE_p,
+            BOUND_p,
+            IRI_p,
+            URI_p,
+            BNODE_p,
+            RAND_p,
+            ABS_p,
+            CEIL_p,
+            FLOOR_p,
+            ROUND_p,
+            CONCAT_p,
+            STRLEN_p,
+            UCASE_p,
+            LCASE_p,
+            ENCODE_FOR_URI_p,
+            CONTAINS_p,
+            STRSTARTS_p,
+            STRENDS_p,
+            STRBEFORE_p,
+            STRAFTER_p,
+            YEAR_p,
+            MONTH_p,
+            DAY_p,
+            HOURS_p,
+            MINUTES_p,
+            SECONDS_p,
+            TIMEZONE_p,
+            TZ_p,
+            NOW_p,
+            UUID_p,
+            STRUUID_p,
+            MD5_p,
+            SHA1_p,
+            SHA256_p,
+            SHA384_p,
+            SHA512_p,
+            COALESCE_p,
+            IF_p,
+            STRLANG_p,
+            STRDT_p,
+            sameTerm_p,
+            isIRI_p,
+            isURI_p,
+            isBLANK_p,
+            isLITERAL_p,
+            isNUMERIC_p,
+            IN_p,
+            NOT_IN_p,
+            FILTER_p,
+            UNION_p,
+            SUBTRACT_p,
+            UNDEF_p,
+            VALUES_p,
+            BIND_p,
+            AS_p,
+            SERVICE_p,
+            SILENT_p,
+            GRAPH_p,
+            OPTIONAL_p,
+            DEFAULT_p,
+            NAMED_p,
+            ALL_p,
+            USING_p,
+            INSERT_p,
+            DELETE_p,
+            WITH_p,
+            WHERE_p,
+            DELETE_WHERE_p,
+            DELETE_DATA_p,
+            INSERT_DATA_p,
+            COPY_p,
+            MOVE_p,
+            ADD_p,
+            CREATE_p,
+            DROP_p,
+            CLEAR_p,
+            LOAD_p,
+            TO_p,
+            INTO_p,
+            OFFSET_p,
+            LIMIT_p,
+            ASC_p,
+            DESC_p,
+            ORDER_BY_p,
+            HAVING_p,
+            GROUP_BY_p,
+            FROM_p,
+            ASK_p,
+            DESCRIBE_p,
+            CONSTRUCT_p,
+            SELECT_p,
+            REDUCED_p,
+            PREFIX_p,
+            BASE_p,
+            PN_LOCAL_ESC_p,
+            HEX_p,
+            PERCENT_p,
+            PLX_p,
+            PN_CHARS_BASE_p,
+            PN_CHARS_U_p,
+            PN_CHARS_p,
+            PN_LOCAL_p,
+            PN_PREFIX_p,
+            VARNAME_p,
+            ANON_p,
+            NIL_p,
+            ECHAR_p,
+            STRING_LITERAL_LONG2_p,
+            STRING_LITERAL_LONG1_p,
+            STRING_LITERAL2_p,
+            STRING_LITERAL1_p,
+            EXPONENT_p,
+            DOUBLE_p,
+            DOUBLE_NEGATIVE_p,
+            DOUBLE_POSITIVE_p,
+            DECIMAL_p,
+            DECIMAL_NEGATIVE_p,
+            DECIMAL_POSITIVE_p,
+            INTEGER_p,
+            INTEGER_NEGATIVE_p,
+            INTEGER_POSITIVE_p,
+            LANGTAG_p,
+            VAR2_p,
+            VAR1_p,
+            BLANK_NODE_LABEL_p,
+            PNAME_NS_p,
+            PNAME_LN_p,
+            IRIREF_p,
+            BlankNode_p,
+            PrefixedName_p,
+            iri_p,
+            String_p,
+            BooleanLiteral_p,
+            NumericLiteralNegative_p,
+            NumericLiteralPositive_p,
+            NumericLiteralUnsigned_p,
+            NumericLiteral_p,
+            RDFLiteral_p,
+            Expression_p,
+            Expression_list_p,
+            ArgList_p,
+            iriOrFunction_p,
+            Aggregate_p,
+            GroupGraphPattern_p,
+            NotExistsFunc_p,
+            ExistsFunc_p,
+            StrReplaceExpression_p,
+            SubstringExpression_p,
+            RegexExpression_p,
+            Var_p,
+            ExpressionList_p,
+            BuiltInCall_p,
+            STR_p,
+            LANG_p,
+            LANGMATCHES_p,
+            DATATYPE_p,
+            BOUND_p,
+            IRI_p,
+            URI_p,
+            BNODE_p,
+            RAND_p,
+            ABS_p,
+            CEIL_p,
+            FLOOR_p,
+            ROUND_p,
+            CONCAT_p,
+            SubstringExpression_p,
+            STRLEN_p,
+            StrReplaceExpression_p,
+            UCASE_p,
+            LCASE_p,
+            ENCODE_FOR_URI_p,
+            CONTAINS_p,
+            STRSTARTS_p,
+            STRENDS_p,
+            STRBEFORE_p,
+            STRAFTER_p,
+            YEAR_p,
+            MONTH_p,
+            DAY_p,
+            HOURS_p,
+            MINUTES_p,
+            SECONDS_p,
+            TIMEZONE_p,
+            TZ_p,
+            NOW_p,
+            UUID_p,
+            STRUUID_p,
+            MD5_p,
+            SHA1_p,
+            SHA256_p,
+            SHA384_p,
+            SHA512_p,
+            COALESCE_p,
+            IF_p,
+            STRLANG_p,
+            STRDT_p,
+            sameTerm_p,
+            isIRI_p,
+            isURI_p,
+            isBLANK_p,
+            isLITERAL_p,
+            isNUMERIC_p,
+            RegexExpression_p,
+            ExistsFunc_p,
+            NotExistsFunc_p,
+            BracketedExpression_p,
+            PrimaryExpression_p,
+            UnaryExpression_p,
+            MultiplicativeExpression_p,
+            AdditiveExpression_p,
+            NumericExpression_p,
+            RelationalExpression_p,
+            NE_p,
+            LT_p,
+            GT_p,
+            LE_p,
+            GE_p,
+            IN_p,
+            NOT_IN_p,
+            ValueLogical_p,
+            ConditionalAndExpression_p,
+            ConditionalOrExpression_p,
+            Expression_p,
+            GraphTerm_p,
+            RDFLiteral_p,
+            NumericLiteral_p,
+            BooleanLiteral_p,
+            BlankNode_p,
+            NIL_p,
+            VarOrIri_p,
+            VarOrTerm_p,
+            TriplesNodePath_p,
+            GraphNodePath_p,
+            TriplesNode_p,
+            GraphNode_p,
+            CollectionPath_p,
+            Collection_p,
+            PropertyListPathNotEmpty_p,
+            BlankNodePropertyListPath_p,
+            TriplesNodePath_p,
+            PropertyListNotEmpty_p,
+            BlankNodePropertyList_p,
+            TriplesNode_p,
+            Integer_p,
+            PathOneInPropertySet_p,
+            PathOneInPropertySet_list_p,
+            PathNegatedPropertySet_p,
+            Path_p,
+            PathPrimary_p,
+            PathMod_p,
+            PathElt_p,
+            PathEltOrInverse_p,
+            PathSequence_p,
+            PathAlternative_p,
+            Path_p,
+            ObjectPath_p,
+            ObjectListPath_p,
+            VerbSimple_p,
+            VerbPath_p,
+            Object_p,
+            ObjectList_p,
+            PropertyListPathNotEmpty_p,
+            PropertyListPath_p,
+            TriplesSameSubjectPath_p,
+            Verb_p,
+            PropertyListNotEmpty_p,
+            PropertyList_p,
+            TriplesSameSubject_p,
+            TriplesSameSubject_list_p,
+            ConstructTriples_p,
+            ConstructTemplate_p,
+            ExpressionList_p,
+            FunctionCall_p,
+            Constraint_p,
+            Filter_p,
+            GroupOrUnionGraphPattern_p,
+            MinusGraphPattern_p,
+            DataBlockValue_p,
+            InlineDataFull_p,
+            InlineDataOneVar_p,
+            DataBlock_p,
+            InlineData_p,
+            Bind_p,
+            ServiceGraphPattern_p,
+            GraphGraphPattern_p,
+            OptionalGraphPattern_p,
+            GraphPatternNotTriples_p,
+            TriplesSameSubjectPath_list_p,
+            TriplesBlock_p,
+            GroupGraphPatternSub_p,
+            SubSelect_p,
+            GroupGraphPattern_p,
+            TriplesTemplate_p,
+            QuadsNotTriples_p,
+            Quads_p,
+            QuadData_p,
+            QuadPattern_p,
+            GraphRef_p,
+            GraphRefAll_p,
+            GraphOrDefault_p,
+            UsingClause_p,
+            InsertClause_p,
+            DeleteClause_p,
+            Modify_p,
+            DeleteWhere_p,
+            DeleteData_p,
+            InsertData_p,
+            Copy_p,
+            Move_p,
+            Add_p,
+            Create_p,
+            Drop_p,
+            Clear_p,
+            Load_p,
+            Update1_p,
+            Prologue_p,
+            Update_p,
+            Update_p,
+            ValuesClause_p,
+            OffsetClause_p,
+            LimitClause_p,
+            LimitOffsetClauses_p,
+            OrderCondition_p,
+            OrderClause_p,
+            HavingCondition_p,
+            HavingClause_p,
+            GroupCondition_p,
+            GroupClause_p,
+            SolutionModifier_p,
+            WhereClause_p,
+            SourceSelector_p,
+            NamedGraphClause_p,
+            DefaultGraphClause_p,
+            DatasetClause_p,
+            AskQuery_p,
+            DescribeQuery_p,
+            ConstructQuery_p,
+            SelectClause_p,
+            SubSelect_p,
+            SelectQuery_p,
+            PrefixDecl_p,
+            BaseDecl_p,
+            Prologue_p,
+            UpdateUnit_p,
+            Query_p,
+            QueryUnit_p]
+    
+#         patterns =  [Group(Var_p | iri_p).setName('VarOrIri')]
+     
+    print(type(patterns[0]))
+     
+    print('making parser')
+    
+    parser = makeAndConnectParser(patterns)
+#     print()
+      
+#     new_class = parser.VarOrIri
+#       
+#     l = '$algebra', '<test>', 'az:Xy'
+#       
+#     for s in l:    
+#         r1 = new_class(s)
+#         print(r1.dump())
+#         print('en nu parseString:\n')
+#         r2 = VarOrIri(s)
+#         print(r2.dump())
+# 
+#     assert r1.items == r2.items
+#     print(type(r1), type(r2))

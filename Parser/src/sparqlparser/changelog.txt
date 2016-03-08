@@ -1,2 +1,3 @@
-INTERN: consistentie-verbeteringen aan grammar; alle producties hebben nu een naam
-INTERN: patternnames.py gevalideerd en werkt nu samen met grammar
+Interne aanpassing
+
+INTERN: duplicaten verwijderd uit pattern-lijst in classify.py

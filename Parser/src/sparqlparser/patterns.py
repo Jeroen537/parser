@@ -204,7 +204,7 @@ FILTER_p = CaselessKeyword('FILTER').setName('FILTER')
 
 UNION_p = CaselessKeyword('UNION').setName('UNION')
 
-MINUS_p = CaselessKeyword('MINUS').setName('MINUS')
+SUBTRACT_p = CaselessKeyword('MINUS').setName('SUBTRACT')
 
 UNDEF_p = CaselessKeyword('UNDEF').setName('UNDEF')
 
@@ -311,7 +311,7 @@ PERCENT_p = Regex(PERCENT_e).setName('PERCENT')
 
 # [170]   PLX       ::=   PERCENT | PN_LOCAL_ESC 
 PLX_e = r'({})|({})'.format( PERCENT_e, PN_LOCAL_ESC_e)
-PLX__p = Regex(PLX_e).setName('PLX_')
+PLX_p = Regex(PLX_e).setName('PLX_')
 
 # [164]   PN_CHARS_BASE     ::=   [A-Z] | [a-z] | [#x00C0-#x00D6] | [#x00D8-#x00F6] | [#x00F8-#x02FF] | [#x0370-#x037D] | [#x037F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF] 
 PN_CHARS_BASE_e = r'[A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\U00010000-\U000EFFFF]'
@@ -475,7 +475,7 @@ Expression_p = Forward().setName('Expression')
 Expression_list_p = separatedList(Expression_p).setName('Expression_list')
  
 # [71]    ArgList   ::=   NIL | '(' 'DISTINCT'? Expression ( ',' Expression )* ')' 
-ArgList_p = Group(NIL_p('nil')) | (LPAR_p + Optional(DISTINCT_p('distinct')) + Expression_list_p('argument') + RPAR_p).setName('ArgList')
+ArgList_p = Group(NIL_p('nil') | (LPAR_p + Optional(DISTINCT_p('distinct')) + Expression_list_p('argument') + RPAR_p)).setName('ArgList')
 
 
 # [128]   iriOrFunction     ::=   iri ArgList? 
@@ -488,13 +488,13 @@ iriOrFunction_p = Group(iri_p('iri') + Optional(Group(ArgList_p))('ArgList')).se
 #             | 'AVG' '(' 'DISTINCT'? Expression ')' 
 #             | 'SAMPLE' '(' 'DISTINCT'? Expression ')' 
 #             | 'GROUP_CONCAT' '(' 'DISTINCT'? Expression ( ';' 'SEPARATOR' '=' String )? ')' 
-Aggregate_p = Group(COUNT_p('count') + LPAR_p + Optional(DISTINCT_p('distinct')) + ( ALL_VALUES_p('all') ^ Expression_p('expression') ) + RPAR_p ) | \
+Aggregate_p = Group((COUNT_p('count') + LPAR_p + Optional(DISTINCT_p('distinct')) + ( ALL_VALUES_p('all') ^ Expression_p('expression') ) + RPAR_p ) | \
             ( SUM_p('sum') + LPAR_p + Optional(DISTINCT_p('distinct')) + ( ALL_VALUES_p('all') ^ Expression_p('expression') ) + RPAR_p ) | \
             ( MIN_p('min') + LPAR_p + Optional(DISTINCT_p('distinct')) + ( ALL_VALUES_p('all') ^ Expression_p('expression') ) + RPAR_p ) | \
             ( MAX_p('max') + LPAR_p + Optional(DISTINCT_p('distinct')) + ( ALL_VALUES_p('all') ^ Expression_p('expression') ) + RPAR_p ) | \
             ( AVG_p('avg') + LPAR_p + Optional(DISTINCT_p('distinct')) + ( ALL_VALUES_p('all') ^ Expression_p('expression') ) + RPAR_p ) | \
             ( SAMPLE_p('sample') + LPAR_p + Optional(DISTINCT_p('distinct')) + ( ALL_VALUES_p('all') ^ Expression_p('expression') ) + RPAR_p ) | \
-            ( GROUP_CONCAT_p('group_concat') + LPAR_p + Optional(DISTINCT_p('distinct')) + Expression_p('expression') + Optional( SEMICOL_p + SEPARATOR_p + '=' + String_p('separator') ) + RPAR_p ).setName('Aggregate')
+            ( GROUP_CONCAT_p('group_concat') + LPAR_p + Optional(DISTINCT_p('distinct')) + Expression_p('expression') + Optional( SEMICOL_p + SEPARATOR_p + '=' + String_p('separator') ) + RPAR_p)).setName('Aggregate')
 
 GroupGraphPattern_p = Forward().setName('GroupGraphPattern')
  
@@ -950,10 +950,10 @@ OffsetClause_p = Group(OFFSET_p + INTEGER_p ).setName('OffsetClause')
 LimitClause_p = Group(LIMIT_p + INTEGER_p ).setName('LimitClause')
 
 # [25]    LimitOffsetClauses        ::=   LimitClause OffsetClause? | OffsetClause LimitClause? 
-LimitOffsetClauses_p = Group(LimitClause_p + Optional(OffsetClause_p)) | (OffsetClause_p + Optional(LimitClause_p)).setName('LimitOffsetClauses')
+LimitOffsetClauses_p = Group((LimitClause_p + Optional(OffsetClause_p)) | (OffsetClause_p + Optional(LimitClause_p))).setName('LimitOffsetClauses')
 
 # [24]    OrderCondition    ::=   ( ( 'ASC' | 'DESC' ) BrackettedExpression ) | ( Constraint | Var ) 
-OrderCondition_p =   Group((ASC_p | DESC_p) + BracketedExpression_p) | (Constraint_p | Var_p).setName('OrderCondition')
+OrderCondition_p =   Group(((ASC_p | DESC_p) + BracketedExpression_p) | (Constraint_p | Var_p)).setName('OrderCondition')
 
 # [23]    OrderClause       ::=   'ORDER' 'BY' OrderCondition+ 
 OrderClause_p = Group(ORDER_BY_p + OneOrMore(OrderCondition_p) ).setName('OrderClause')

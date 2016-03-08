@@ -1,0 +1,25 @@
+
+from subprocess import run
+import os
+
+os.chdir('../reftest/fed')
+print('Running fed test/n')
+run(['/Library/Frameworks/Python.framework/Versions/3.5/bin/python3', 'testCases.py'])
+os.chdir('../query')
+print('\nRunning query test\n')
+run(['/Library/Frameworks/Python.framework/Versions/3.5/bin/python3', 'testCases.py'])
+os.chdir('../update1')
+print('\nRunning update1 test\n')
+run(['/Library/Frameworks/Python.framework/Versions/3.5/bin/python3', 'testCases.py'])
+os.chdir('../query')
+print('\nRunning update2 test\n')
+run(['/Library/Frameworks/Python.framework/Versions/3.5/bin/python3', 'testCases.py'])
+os.chdir('../../sparqlparser')
+print('\nRunning grammar test\n')
+run(['/Library/Frameworks/Python.framework/Versions/3.5/bin/python3', 'grammar.py'])
+print('\nRunning func_test test\n')
+run(['/Library/Frameworks/Python.framework/Versions/3.5/bin/python3', 'func_test.py'])
+print('\nRunning grammar_functest test\n')
+run(['/Library/Frameworks/Python.framework/Versions/3.5/bin/python3', 'grammar_functest.py'])
+print('\nRunning grammar_unittest test\n')
+run(['/Library/Frameworks/Python.framework/Versions/3.5/bin/python3', 'grammar_unittest.py'])

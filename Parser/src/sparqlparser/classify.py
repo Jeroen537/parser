@@ -5,7 +5,7 @@ Created on 4 mrt. 2016
 '''
 
 from sparqlparser.grammar import *
-from sparqlparser.rules import *
+# from sparqlparser.patterns import *
 
     
 def makeAndConnectParser(patterns):
@@ -215,74 +215,17 @@ if __name__ == '__main__':
             NumericLiteralUnsigned_p,
             NumericLiteral_p,
             RDFLiteral_p,
-#             Expression_p,
             Expression_list_p,
             ArgList_p,
             iriOrFunction_p,
             Aggregate_p,
-#             GroupGraphPattern_p,
             NotExistsFunc_p,
             ExistsFunc_p,
             StrReplaceExpression_p,
             SubstringExpression_p,
             RegexExpression_p,
             Var_p,
-#             ExpressionList_p,
             BuiltInCall_p,
-#             STR_p,
-#             LANG_p,
-#             LANGMATCHES_p,
-#             DATATYPE_p,
-#             BOUND_p,
-#             IRI_p,
-#             URI_p,
-#             BNODE_p,
-#             RAND_p,
-#             ABS_p,
-#             CEIL_p,
-#             FLOOR_p,
-#             ROUND_p,
-#             CONCAT_p,
-#             SubstringExpression_p,
-#             STRLEN_p,
-#             StrReplaceExpression_p,
-#             UCASE_p,
-#             LCASE_p,
-#             ENCODE_FOR_URI_p,
-#             CONTAINS_p,
-#             STRSTARTS_p,
-#             STRENDS_p,
-#             STRBEFORE_p,
-#             STRAFTER_p,
-#             YEAR_p,
-#             MONTH_p,
-#             DAY_p,
-#             HOURS_p,
-#             MINUTES_p,
-#             SECONDS_p,
-#             TIMEZONE_p,
-#             TZ_p,
-#             NOW_p,
-#             UUID_p,
-#             STRUUID_p,
-#             MD5_p,
-#             SHA1_p,
-#             SHA256_p,
-#             SHA384_p,
-#             SHA512_p,
-#             COALESCE_p,
-#             IF_p,
-#             STRLANG_p,
-#             STRDT_p,
-#             sameTerm_p,
-#             isIRI_p,
-#             isURI_p,
-#             isBLANK_p,
-#             isLITERAL_p,
-#             isNUMERIC_p,
-#             RegexExpression_p,
-#             ExistsFunc_p,
-#             NotExistsFunc_p,
             BracketedExpression_p,
             PrimaryExpression_p,
             UnaryExpression_p,
@@ -290,42 +233,25 @@ if __name__ == '__main__':
             AdditiveExpression_p,
             NumericExpression_p,
             RelationalExpression_p,
-#             NE_p,
-#             LT_p,
-#             GT_p,
-#             LE_p,
-#             GE_p,
-#             IN_p,
-#             NOT_IN_p,
             ValueLogical_p,
             ConditionalAndExpression_p,
             ConditionalOrExpression_p,
             Expression_p,
             GraphTerm_p,
-#             RDFLiteral_p,
-#             NumericLiteral_p,
-#             BooleanLiteral_p,
-#             BlankNode_p,
-#             NIL_p,
             VarOrIri_p,
             VarOrTerm_p,
-#             TriplesNodePath_p,
             GraphNodePath_p,
             TriplesNode_p,
             GraphNode_p,
             CollectionPath_p,
             Collection_p,
-#             PropertyListPathNotEmpty_p,
             BlankNodePropertyListPath_p,
             TriplesNodePath_p,
-#             PropertyListNotEmpty_p,
             BlankNodePropertyList_p,
-#             TriplesNode_p,
             Integer_p,
             PathOneInPropertySet_p,
             PathOneInPropertySet_list_p,
             PathNegatedPropertySet_p,
-#             Path_p,
             PathPrimary_p,
             PathMod_p,
             PathElt_p,
@@ -368,7 +294,6 @@ if __name__ == '__main__':
             TriplesSameSubjectPath_list_p,
             TriplesBlock_p,
             GroupGraphPatternSub_p,
-#             SubSelect_p,
             GroupGraphPattern_p,
             TriplesTemplate_p,
             QuadsNotTriples_p,
@@ -393,8 +318,6 @@ if __name__ == '__main__':
             Clear_p,
             Load_p,
             Update1_p,
-#             Prologue_p,
-#             Update_p,
             Update_p,
             ValuesClause_p,
             OffsetClause_p,
@@ -424,9 +347,7 @@ if __name__ == '__main__':
             UpdateUnit_p,
             Query_p,
             QueryUnit_p]
-    
-#         patterns =  [Group(Var_p | iri_p).setName('VarOrIri')]
-     
+         
     print(len(patterns))
      
     print('making parser')
@@ -436,22 +357,16 @@ if __name__ == '__main__':
     print(len(parser.__dict__))
     
     pnames = [p.name for p in patterns]
-    
     print(len(pnames))
     print(len(set(pnames)))
-#         assert name in parser.__dict__, name
-#     print()
+    print()
+    
+    ppatterns = [getattr(parser, a).pattern for a in parser.__dict__]
+    for p in ppatterns:
+        print(p, type(p))
+        
+    s = 'aA:Z.a ("*Expression*")'
+    r = parser.iriOrFunction(s)
+    print(r.dump())
+    
 
-#     new_class = parser.VarOrIri
-#       
-#     l = '$algebra', '<test>', 'az:Xy'
-#       
-#     for s in l:    
-#         r1 = new_class(s)
-#         print(r1.dump())
-#         print('en nu parseString:\n')
-#         r2 = VarOrIri(s)
-#         print(r2.dump())
-# 
-#     assert r1.items == r2.items
-#     print(type(r1), type(r2))

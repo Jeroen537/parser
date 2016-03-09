@@ -446,7 +446,7 @@ BlankNode_p = Group(BLANK_NODE_LABEL_p | ANON_p).setName('BlankNode')
 PrefixedName_p = Group(PNAME_LN_p ^ PNAME_NS_p).setName('PrefixedName')
 
 # [136]   iri       ::=   IRIREF | PrefixedName 
-iri_p = Group(Group(IRIREF_p ^ PrefixedName_p)).setName('iri')
+iri_p = Group(IRIREF_p ^ PrefixedName_p).setName('iri')
 
 # [135]   String    ::=   STRING_LITERAL1 | STRING_LITERAL2 | STRING_LITERAL_LONG1 | STRING_LITERAL_LONG2 
 String_p = Group(STRING_LITERAL1_p ^ STRING_LITERAL2_p ^ STRING_LITERAL_LONG1_p ^ STRING_LITERAL_LONG2_p).setName('String')

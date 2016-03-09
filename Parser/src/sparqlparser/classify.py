@@ -17,6 +17,15 @@ def makeAndConnectParser(patterns):
      
     def classify(wrappedPattern):
         result = type(wrappedPattern[0].name, (ParseInfo,), {'pattern': wrappedPattern[0]})
+        print('wrappedPattern[0]:', type(wrappedPattern[0]))
+        print('name input:', wrappedPattern[0].name)
+        print('name result:', result.__name__)
+        print('class result:', result.__class__)
+        print('dict result:', result.__dict__)
+        print('result:', type(result))
+        print('pattern name:', result.pattern.name)
+        assert result.pattern == wrappedPattern[0]
+        print()
         wrappedPattern[0].setParseAction(parseInfoFunc(result))
         return result     
              
@@ -361,12 +370,18 @@ if __name__ == '__main__':
     print(len(set(pnames)))
     print()
     
-    ppatterns = [getattr(parser, a).pattern for a in parser.__dict__]
-    for p in ppatterns:
-        print(p, type(p))
+    print(parser.iriOrFunction.__name__)
+#     for a in parser.__dict__:
+#         print(a, type(parser.__dict__[a]))
+#     ppatterns = [getattr(parser, a).pattern for a in parser.__dict__]
+#     for p in ppatterns:
+#         print(p, type(p))
         
     s = 'aA:Z.a ("*Expression*")'
     r = parser.iriOrFunction(s)
     print(r.dump())
     
+    s = '(  )'
+    r = parser.NIL(s)
+    print(r.dump())
 

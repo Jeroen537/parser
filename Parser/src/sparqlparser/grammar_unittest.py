@@ -35,7 +35,8 @@ class Test(unittest.TestCase):
                 if debug >= 1:
                     print('\npass:', p, end=''), 
                 if debug >= 3:
-                    print(' ( = ' + ' '.join([str(ord(c)) for c in p]), end=' )')
+                    print(' ( = testcase: ' + ' '.join([str(ord(c)) for c in p]), end=' )')
+                    print()
                 e = eval(rule + '_p').parseString(p, parseAll=True)
                 while len(e) == 1 and isinstance(e[0], ParseResults):
                     e = e[0]
@@ -46,9 +47,11 @@ class Test(unittest.TestCase):
                 if debug >= 1:
                     print(' --> ' + str(e), end='')
                     if debug >= 3:
-                        print(' ( = ' + ' '.join([str(ord(c)) for c in str(e)[2:-2]]), end=' )')
+                        print(' ( = result: ' + ' '.join([str(ord(c)) for c in str(e)[2:-2]]), end=' )')
+                        print()
                 assert e[0].isValid()
-                assert ''.join(e[0].__str__().upper().split()) == ''.join(p.upper().split()), 'Parsed expression: "{}" conflicts with original: "{}"'.format(e[0].__str__(), p)
+                assert ''.join(e[0].__str__().upper().split()) == ''.join(p.upper().split()), \
+                    'Parsed expression: "{}" (represented as "{}") \n\tconflicts with original: "{}" (represented as "{}")'.format(e[0].__str__(), ''.join(e[0].__str__().split()), p, ''.join(p.split()))
             for f in testCases[rule]['fail']: 
                 if debug >= 1:
                     print('\nfail:', f, end='')

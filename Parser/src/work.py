@@ -1,6 +1,22 @@
 from sparqlparser.grammar import *
 
-s = 'SELECT ?v WHERE {?v <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine#VintageYear> .}'
+s = '''
+PREFIX ns: <http://ds.tno.nl>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema>
+
+SELECT ?p ?t WHERE
+{
+?p a foaf:Person .
+?p ns:hasTemp ?t .
+?p ns:hasAge ?a .
+?t a ns:TempInC .
+FILTER ( (datatype(?t) = xsd:float) &&
+( ?t > 37.0 ) &&
+( ?a < 37.0 )
+).
+}
+'''[1:-1]
 
 r = parseQuery(s)
 

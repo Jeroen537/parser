@@ -799,3 +799,5 @@ if __name__ == '__main__':
          'DESCRIBE * FROM NAMED <work:22?> WHERE { SELECT * {} } GROUP BY ROUND ( "*Expression*")',
          'ASK { SELECT * {} } GROUP BY ROUND ( "*Expression*") HAVING <test:227> (DISTINCT "*Expression*",  "*Expression*",   "*Expression*" )']
     printResults(l, 'QueryUnit', dump=False)
+    
+    print('\nDone')

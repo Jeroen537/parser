@@ -302,6 +302,39 @@ def parseInfoFunc(cls):
     items set to a recursive list of [name, value] pairs (see below).
     The function returned is used to set a parseAction for a pattern.'''
             
+#     def labeledList(parseresults):
+#         '''For internal use. Converts a ParseResults object to a recursive structure consisting of a list of pairs [name, obj],
+#         where name is a label and obj either a string, a ParseInfo object, or again a similar list.'''
+#         while len(parseresults) == 1 and isinstance(parseresults[0], ParseResults):
+#             parseresults = parseresults[0]
+#         valuedict = dict((id(t), k) for (k, t) in parseresults.items())
+#         assert len(valuedict) == len(list(parseresults.items())), 'internal error: len(valuedict) = {}, len(parseresults.items) = {}'.format(len(valuedict), len(list(parseresults.items)))
+#         result = []
+#         for t in parseresults:
+#             if isinstance(t, str):
+#                 result.append([None, t])
+#             elif isinstance(t, ParseInfo):
+#                 t.__dict__['name'] = valuedict.get(id(t))
+#                 result.append([valuedict.get(id(t)), t])
+#             elif isinstance(t, list):
+#                 result.append(t)
+#             else:
+#                 assert isinstance(t, ParseResults), type(t)
+#                 assert valuedict.get(id(t)) == None, 'Error: found name ({}) for compound expression {}, remove'.format(valuedict.get(id(t)), t.__str__())
+#                 result.extend(labeledList(t))
+#         return result
+
+    def isParseInfoList(l):
+        if len(l) != 2: 
+            return False
+        if l[0] != None and isinstance(l[1], str):
+            return False
+        if not isinstance(l[1], (str, ParseInfo)):
+            return False
+        if isinstance(l[1], ParseInfo) and not all(map(isParseInfoList, l[1].getItems())):
+            return False
+        return True
+        
     def labeledList(parseresults):
         '''For internal use. Converts a ParseResults object to a recursive structure consisting of a list of pairs [name, obj],
         where name is a label and obj either a string, a ParseInfo object, or again a similar list.'''
@@ -320,8 +353,14 @@ def parseInfoFunc(cls):
                 result.append(t)
             else:
                 assert isinstance(t, ParseResults), type(t)
-                assert valuedict.get(id(t)) == None, 'Error: found name ({}) for compound expression {}, remove'.format(valuedict.get(id(t)), t.__str__())
-                result.extend(labeledList(t))
+                label = valuedict.get(id(t))
+                assert label == None or len(t) == 1, 'Error: found name ({}) for compound expression {}, remove'.format(valuedict.get(id(t)), t.__str__())
+                if label:
+                    assert isinstance(t[0], ParseInfo)
+                    result.append([label, t[0]])
+                else:
+                    result.extend(labeledList(t))
+        assert all([isParseInfoList(t) for t in result])
         return result
     
     def makeparseinfo(parseresults):

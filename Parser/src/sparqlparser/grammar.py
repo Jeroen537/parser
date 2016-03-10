@@ -94,7 +94,7 @@ class ParseInfo(metaclass=ParsePattern):
             assert len(args) == 1 and isinstance(args[0], str)
             self.__dict__['name'] = None
             self.__dict__['items'] = self.__getPattern().parseString(args[0], parseAll=True)[0].items
-        assert self.__isLabelConsistent()
+        assert self.isLabelConsistent()
                 
     def __eq__(self, other):
         '''Compares the items part of both classes for equality, recursively.
@@ -119,11 +119,11 @@ class ParseInfo(metaclass=ParsePattern):
     def __repr__(self):
         return self.__class__.__name__ + '("' + str(self) + '")'
    
-    def __isLabelConsistent(self):
+    def isLabelConsistent(self):
         '''Checks if for labels are only not None for pairs [label, value] where value is a ParseInfo instance, and in those cases label must be equal to value.name.
         This is for internal use only.'''
         return all([i[0] == i[1].name if isinstance(i[1], ParseInfo) else i[0] == None if isinstance(i[1], str) else False for i in self.getItems()]) and \
-                all([i[1].__isLabelConsistent() if isinstance(i[1], ParseInfo) else i[0] == None for i in self.getItems()])
+                all([i[1].isLabelConsistent() if isinstance(i[1], ParseInfo) else i[0] == None for i in self.getItems()])
 
     def __getPattern(self):
         '''Returns the pattern used to parse expressions for this class.'''
@@ -204,7 +204,7 @@ class ParseInfo(metaclass=ParsePattern):
     def check(self, *, report = False, render=False, dump=False):
         '''Runs various checks. Returns True if all checks pass, else False. Optionally prints a report with the check results, renders, and/or dumps itself.'''
         if report:
-            print('{} is{}internally label-consistent'.format(self, ' ' if self.__isLabelConsistent() else ' not '))
+            print('{} is{}internally label-consistent'.format(self, ' ' if self.isLabelConsistent() else ' not '))
             print('{} renders a{}expression ({})'.format(self, ' valid ' if self.yieldsValidExpression() else 'n invalid ', self.__str__()))
             print('{} is a{}valid parse object'.format(self, ' ' if self.isValid() else ' not '))
         if render:
@@ -213,7 +213,7 @@ class ParseInfo(metaclass=ParsePattern):
         if dump:
             print('--dump:')
             print(self.dump())
-        return self.__isLabelConsistent() and self.yieldsValidExpression() and self.isValid()
+        return self.isLabelConsistent() and self.yieldsValidExpression() and self.isValid()
 
     def getName(self):
         '''Returns name attribute (non-recursive).'''
@@ -331,6 +331,8 @@ def parseInfoFunc(cls):
             return False
         if not isinstance(l[1], (str, ParseInfo)):
             return False
+#         if isinstance(l[1], ParseInfo) and not l[1].isLabelConsistent():
+#             return False
         if isinstance(l[1], ParseInfo) and not all(map(isParseInfoList, l[1].getItems())):
             return False
         return True

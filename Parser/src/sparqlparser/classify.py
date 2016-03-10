@@ -15,18 +15,9 @@ def makeAndConnectParser(patterns):
     As a side effect, the method sets the parseaction for the pattern to be that class. 
     Note that this implies that the patterns in the calling module get changed.'''
      
-    def classify(wrappedPattern):
-        result = type(wrappedPattern[0].name, (ParseInfo,), {'pattern': wrappedPattern[0]})
-        print('wrappedPattern[0]:', type(wrappedPattern[0]))
-        print('name input:', wrappedPattern[0].name)
-        print('name result:', result.__name__)
-        print('class result:', result.__class__)
-        print('dict result:', result.__dict__)
-        print('result:', type(result))
-        print('pattern name:', result.pattern.name)
-        assert result.pattern == wrappedPattern[0]
-        print()
-        wrappedPattern[0].setParseAction(parseInfoFunc(result))
+    def classify(pattern):
+        result = type(pattern.name, (ParseInfo,), {'pattern': pattern})
+        pattern.setParseAction(parseInfoFunc(result))
         return result     
              
     class _parser: pass
@@ -34,7 +25,7 @@ def makeAndConnectParser(patterns):
     parser = _parser()
     for p in patterns:
         if p.name not in parser.__dict__:
-            setattr(parser, p.name, classify([p]))
+            setattr(parser, p.name, classify(p))
         else:
             print('duplicate attribute name:', p.name)
          

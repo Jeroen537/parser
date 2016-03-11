@@ -1,1 +1,1 @@
-Diverse interne verbeteringen
+alltests script aangepast voor Python 3.4 ivm graph plotting met cairo

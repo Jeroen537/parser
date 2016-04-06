@@ -1,7 +1,7 @@
 Version 0.2.2
 
 - Labels added for BASE, PREFIX, WHERE, Update, Prologue and Constraint occurrences
-- Improved patterns for NOT IN, NOT EXISTS, NIL and ANON, leading to better dump() output
+- Improved patterns for NOT IN, NOT EXISTS, NIL, ANON, and others, leading to better dump() output
 
 Version 0.2.1
 

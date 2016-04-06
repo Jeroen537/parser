@@ -1,0 +1,116 @@
+   Some productions are ambiguous.  The "first-match-wins" (a.k.a.
+   "greedy") algorithm applies.  For details, see [RFC3986].
+
+sub-delims     = "!" / "$" / "&" / "'" / "(" / ")"
+                  / "*" / "+" / "," / ";" / "="
+                  
+gen-delims     = ":" / "/" / "?" / "#" / "[" / "]" / "@"   
+
+reserved       = gen-delims / sub-delims
+
+ALPHA          =  %x41-5A / %x61-7A   ; A-Z / a-z
+
+DIGIT          =  %x30-39 ; 0-9
+
+HEXDIG         =  DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+
+unreserved     = ALPHA / DIGIT / "-" / "." / "_" / "~"
+
+pct-encoded    = "%" HEXDIG HEXDIG
+
+dec-octet      = DIGIT                 ; 0-9
+                  / %x31-39 DIGIT         ; 10-99
+                  / "1" 2DIGIT            ; 100-199
+                  / "2" %x30-34 DIGIT     ; 200-249
+                  / "25" %x30-35          ; 250-255
+
+IPv4address    = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+h16            = 1*4HEXDIG
+
+ls32           = ( h16 ":" h16 ) / IPv4address
+
+IPv6address    =                            6( h16 ":" ) ls32
+                  /                       "::" 5( h16 ":" ) ls32
+                  / [               h16 ] "::" 4( h16 ":" ) ls32
+                  / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+                  / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+                  / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+                  / [ *4( h16 ":" ) h16 ] "::"              ls32
+                  / [ *5( h16 ":" ) h16 ] "::"              h16
+                  / [ *6( h16 ":" ) h16 ] "::"
+                  
+IPvFuture      = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+                  
+IP-literal     = "[" ( IPv6address / IPvFuture  ) "]"
+
+port           = *DIGIT
+
+scheme         = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+
+iprivate       = %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
+
+ucschar        = %xA0-D7FF / %xF900-FDCF / %xFDF0-FFEF
+                  / %x10000-1FFFD / %x20000-2FFFD / %x30000-3FFFD
+                  / %x40000-4FFFD / %x50000-5FFFD / %x60000-6FFFD
+                  / %x70000-7FFFD / %x80000-8FFFD / %x90000-9FFFD
+                  / %xA0000-AFFFD / %xB0000-BFFFD / %xC0000-CFFFD
+                  / %xD0000-DFFFD / %xE1000-EFFFD
+
+iunreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~" / ucschar
+
+ipchar         = iunreserved / pct-encoded / sub-delims / ":"
+                  / "@"
+
+iquery         = *( ipchar / iprivate / "/" / "?" )
+
+ifragment      = *( ipchar / "/" / "?" )     
+
+isegment-nz-nc = 1*( iunreserved / pct-encoded / sub-delims / "@" )	; non-zero-length segment without any colon ":"
+                  
+isegment       = *ipchar
+
+isegment-nz    = 1*ipchar
+
+ipath-empty    = 0<ipchar>
+
+ipath-abempty  = *( "/" isegment )
+   
+ipath-absolute = "/" [ isegment-nz *( "/" isegment ) ]
+   
+ipath-noscheme = isegment-nz-nc *( "/" isegment )
+
+ipath-rootless = isegment-nz *( "/" isegment )
+
+ipath          = ipath-abempty   ; begins with "/" or is empty
+                  / ipath-absolute  ; begins with "/" but not "//"
+                  / ipath-noscheme  ; begins with a non-colon segment
+                  / ipath-rootless  ; begins with a segment
+                  / ipath-empty     ; zero characters
+                  
+ireg-name      = *( iunreserved / pct-encoded / sub-delims )
+
+iuserinfo      = *( iunreserved / pct-encoded / sub-delims / ":" )
+
+ihost          = IP-literal / IPv4address / ireg-name
+
+iauthority     = [ iuserinfo "@" ] ihost [ ":" port ]
+
+irelative-part = "//" iauthority ipath-abempty
+                  / ipath-absolute
+                  / ipath-noscheme
+                  / ipath-empty
+
+irelative-ref  = irelative-part [ "?" iquery ] [ "#" ifragment ]
+
+ihier-part     = "//" iauthority ipath-abempty
+                  / ipath-absolute
+                  / ipath-rootless
+                  / ipath-empty
+                  
+absolute-IRI   = scheme ":" ihier-part [ "?" iquery ]                  
+                  
+IRI            = scheme ":" ihier-part [ "?" iquery ] [ "#" ifragment ]
+                         
+IRI-reference  = IRI / irelative-ref
+                         

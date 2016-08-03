@@ -1,3 +1,6 @@
+Build 2665
+- added ParseStruct class method getPattern(), instance method __getPattern() now goes through getPattern()
+
 Build 2647
 - Added check hasParentPointers() to base.py
 - Small changes to updateWith() and createParentPointers() in base.py, no functional change

@@ -10,6 +10,10 @@ class ParseStruct:
     '''Parent class for all ParseStruct subclasses. These subclasses will typically correspond to productions in a given grammar,
     e.g. an EBNF grammar.'''
     
+    @classmethod
+    def getPattern(cls):
+        return cls._pattern
+    
     def __init__(self, expr):
         '''A ParseStruct object contains a _pattern attribute, that corresponds to a pyparsing _pattern.
         It can be initialized wih either a valid string for the subclass concerned,
@@ -80,7 +84,7 @@ class ParseStruct:
 
     def __getPattern(self):
         '''Returns the _pattern used to parse expressions for this class.'''
-        return self.__class__._pattern
+        return self.__class__.getPattern()
     
     def __getElements(self, labeledOnly = True):
         '''Returns a flat list of all enmbedded ParseStruct instances (inclusing itself),

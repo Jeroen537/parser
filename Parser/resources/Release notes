@@ -1,3 +1,6 @@
+Build 2786
+- small internal improvement in base.py, no functional impact
+
 Build 2758
 - changed all delimiters (',', '|', '.' etc.) that were still represented as strings in the dump to ParseStruct instances. For example, see ArgList.
 

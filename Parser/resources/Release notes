@@ -1,3 +1,6 @@
+Build 2758
+- changed all delimiters (',', '|', '.' etc.) that were still represented as strings in the dump to ParseStruct instances. For example, see ArgList.
+
 Build 2665
 - added ParseStruct class method getPattern(), instance method __getPattern() now goes through getPattern()
 

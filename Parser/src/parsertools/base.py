@@ -318,33 +318,42 @@ def parseStructFunc(class_):
 
 # Helper function for delimited lists where the delimiters must be included in the result
 
-def separatedList(_pattern, sep=','):
-    '''Similar to a delimited list of instances from a ParseStruct subclass, but includes the separator in its ParseResults. Returns a 
-    delimitedList object with a special parse action. If a resultsName for the delimitedList was specified, the corresponding
+def separatedList(_pattern, sep):
+    '''Similar to a delimited list of instances from a ParseStruct subclass, but includes the separator in its ParseResults.
+    The separator must be a ParseStruct class with a (pyparsing) Literal as its pattern.
+    Returns a delimitedList object with a special parse action. If a resultsName for the delimitedList was specified, the corresponding
     label is applied to all occurrences of the _pattern.'''
       
     def makeList(parseresults):
         assert len(parseresults) > 0, 'internal error'
         assert len(list((parseresults.keys()))) <= 1, 'internal error, got more than one key: {}'.format(list(parseresults.keys()))
         label = list(parseresults.keys())[0] if len(list(parseresults.keys())) == 1 else None
-        assert all([p.__class__._pattern == _pattern for p in parseresults if isinstance(p, ParseStruct)]), 'internal error: _pattern mismatch ({}, {})'.format(p.__class__._pattern, _pattern)
+#         assert all([p.__class__._pattern == _pattern for p in parseresults if isinstance(p, ParseStruct)]), 'internal error: _pattern mismatch ({}, {})'.format(p.__class__._pattern, _pattern)
         templist = []
         for item in parseresults:
-            if isinstance(item, ParseStruct):
+#             if isinstance(item, ParseStruct):
+#                 item.__dict__['_label'] = label
+#                 templist.append(item)
+#             else:
+#                 assert isinstance(item, str)
+#                 templist.append(item)
+            if item.__class__.getPattern() != sep.getPattern():
                 item.__dict__['_label'] = label
                 templist.append(item)
             else:
                 assert isinstance(item, str)
+                print('*** String encountered in makeList: {}'.format(item))
                 templist.append(item)
         result = []
         result.append(templist[0])
         for p in templist[1:]:
-            result.append(sep)
+            result.append(sep(sep.getPattern().match))
             result.append(p)
         return result
   
       
-    result = delimitedList(_pattern, sep)
+    assert issubclass(sep, ParseStruct) and isinstance(sep.getPattern(), Literal) and sep.getPattern != _pattern
+    result = delimitedList(_pattern, sep.getPattern())
     result.setParseAction(makeList)
     return result
 

@@ -115,10 +115,10 @@ SELECT ?p WHERE
         r = SPARQLParser.PrimaryExpression(s, postParseCheck=False)
         
         found = r.searchElements()
-        assert len(found) == 32, len(found)
+        assert len(found) == 33, len(found)
         
         found = r.searchElements(labeledOnly=False)
-        assert len(found) == 32, len(found)
+        assert len(found) == 33, len(found)
         
         found = r.searchElements(labeledOnly=True)
         assert len(found) == 4, len(found)
@@ -134,7 +134,7 @@ SELECT ?p WHERE
         r = SPARQLParser.PrimaryExpression(s, postParseCheck=False)
         found = r.searchElements(element_type=SPARQLParser.ArgList)
         arglist = found[0]
-        assert(len(arglist.getChildren())) == 4, len(arglist.getChildren())
+        assert(len(arglist.getChildren())) == 5, len(arglist.getChildren())
          
         ancestors = arglist.getAncestors()
         assert str(ancestors) == '[iriOrFunction("<c:check#22?> ( $var , ?var )"), PrimaryExpression("<c:check#22?> ( $var , ?var )")]', str(ancestors)
@@ -170,7 +170,8 @@ SELECT ?p WHERE
 |  |  |  |  |  |  |  |  |  |  |  |  [String] /"*Expression*"/
 |  |  |  |  |  |  |  |  |  |  |  |  |  [STRING_LITERAL2] /"*Expression*"/
 |  |  |  |  |  |  |  |  |  |  |  |  |  |  "*Expression*"
-|  ,
+|  [COMMA] /,/
+|  |  ,
 |  > argument:
 |  [Expression] /"*Expression*"/
 |  |  [ConditionalOrExpression] /"*Expression*"/
@@ -187,7 +188,8 @@ SELECT ?p WHERE
 |  |  |  |  |  |  |  |  |  |  |  |  [String] /"*Expression*"/
 |  |  |  |  |  |  |  |  |  |  |  |  |  [STRING_LITERAL2] /"*Expression*"/
 |  |  |  |  |  |  |  |  |  |  |  |  |  |  "*Expression*"
-|  ,
+|  [COMMA] /,/
+|  |  ,
 |  > argument:
 |  [Expression] /"*Expression*"/
 |  |  [ConditionalOrExpression] /"*Expression*"/

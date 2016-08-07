@@ -278,6 +278,12 @@ SPARQLParser.addElement(PERIOD)
 COMMA = Literal(',').setName('COMMA')
 SPARQLParser.addElement(COMMA)
 
+BAR = Literal('|').setName('BAR')
+SPARQLParser.addElement(BAR)
+
+SLASH = Literal('/').setName('SLASH')
+SPARQLParser.addElement(SLASH)
+
 #
 # Operators
 #
@@ -895,7 +901,7 @@ Expression = Forward().setName('Expression')
 SPARQLParser.addElement(Expression)
 
 # [71]    ArgList   ::=   NIL | '(' 'DISTINCT'? Expression ( ',' Expression )* ')' 
-ArgList = Group((NIL('nil')) | (LPAR + Optional(DISTINCT)('distinct') + separatedList(Expression)('argument') + RPAR)).setName('ArgList')
+ArgList = Group((NIL('nil')) | (LPAR + Optional(DISTINCT)('distinct') + separatedList(Expression, sep=SPARQLParser.COMMA)('argument') + RPAR)).setName('ArgList')
 SPARQLParser.addElement(ArgList)
 
 
@@ -1183,7 +1189,7 @@ PathOneInPropertySet = Group(iri | TYPE | (INVERSE  + ( iri | TYPE ))).setName('
 SPARQLParser.addElement(PathOneInPropertySet)
 
 # [95]    PathNegatedPropertySet    ::=   PathOneInPropertySet | '(' ( PathOneInPropertySet ( '|' PathOneInPropertySet )* )? ')' 
-PathNegatedPropertySet = Group(PathOneInPropertySet | (LPAR + Group(Optional(separatedList(PathOneInPropertySet, sep='|'))('pathinonepropertyset')) + RPAR)).setName('PathNegatedPropertySet')
+PathNegatedPropertySet = Group(PathOneInPropertySet | (LPAR + Group(Optional(separatedList(PathOneInPropertySet, sep=SPARQLParser.BAR))('pathinonepropertyset')) + RPAR)).setName('PathNegatedPropertySet')
 SPARQLParser.addElement(PathNegatedPropertySet)
 
 Path = Forward().setName('Path')
@@ -1206,11 +1212,11 @@ PathEltOrInverse = Group(PathElt | (INVERSE + PathElt)).setName('PathEltOrInvers
 SPARQLParser.addElement(PathEltOrInverse)
 
 # [90]    PathSequence      ::=   PathEltOrInverse ( '/' PathEltOrInverse )* 
-PathSequence = Group(separatedList(PathEltOrInverse, sep='/')).setName('PathSequence')
+PathSequence = Group(separatedList(PathEltOrInverse, sep=SPARQLParser.SLASH)).setName('PathSequence')
 SPARQLParser.addElement(PathSequence)
 
 # [89]    PathAlternative   ::=   PathSequence ( '|' PathSequence )* 
-PathAlternative = Group(separatedList(PathSequence, sep='|')).setName('PathAlternative')
+PathAlternative = Group(separatedList(PathSequence, sep=SPARQLParser.BAR)).setName('PathAlternative')
 SPARQLParser.addElement(PathAlternative)
  
 # [88]    Path      ::=   PathAlternative
@@ -1221,7 +1227,7 @@ ObjectPath = Group(GraphNodePath + Empty() ).setName('ObjectPath')
 SPARQLParser.addElement(ObjectPath)
 
 # [86]    ObjectListPath    ::=   ObjectPath ( ',' ObjectPath )* 
-ObjectListPath = Group(separatedList(ObjectPath)).setName('ObjectListPath')
+ObjectListPath = Group(separatedList(ObjectPath, sep=SPARQLParser.COMMA)).setName('ObjectListPath')
 SPARQLParser.addElement(ObjectListPath)
 
 # [85]    VerbSimple        ::=   Var 
@@ -1237,7 +1243,7 @@ Object = Group(GraphNode + Empty() ).setName('Object')
 SPARQLParser.addElement(Object)
  
 # [79]    ObjectList        ::=   Object ( ',' Object )* 
-ObjectList = Group(separatedList(Object)).setName('ObjectList')
+ObjectList = Group(separatedList(Object, sep=SPARQLParser.COMMA)).setName('ObjectList')
 SPARQLParser.addElement(ObjectList)
 
 # [83]    PropertyListPathNotEmpty          ::=   ( VerbPath | VerbSimple ) ObjectListPath ( ';' ( ( VerbPath | VerbSimple ) ObjectList )? )* 
@@ -1267,7 +1273,7 @@ TriplesSameSubject = Group((VarOrTerm + PropertyListNotEmpty) | (TriplesNode + P
 SPARQLParser.addElement(TriplesSameSubject)
 
 # [74]    ConstructTriples          ::=   TriplesSameSubject ( '.' ConstructTriples? )? 
-ConstructTriples = Group(separatedList(TriplesSameSubject, sep='.') + Optional(PERIOD)).setName('ConstructTriples')
+ConstructTriples = Group(separatedList(TriplesSameSubject, sep=SPARQLParser.PERIOD) + Optional(PERIOD)).setName('ConstructTriples')
 SPARQLParser.addElement(ConstructTriples)
 
 # [73]    ConstructTemplate         ::=   '{' ConstructTriples? '}'
@@ -1275,7 +1281,7 @@ ConstructTemplate = Group(LCURL + Optional(ConstructTriples) + RCURL ).setName('
 SPARQLParser.addElement(ConstructTemplate)
 
 # [72]    ExpressionList    ::=   NIL | '(' Expression ( ',' Expression )* ')' 
-ExpressionList << Group(NIL | (LPAR + separatedList(Expression) + RPAR))
+ExpressionList << Group(NIL | (LPAR + separatedList(Expression, sep=SPARQLParser.COMMA) + RPAR))
 
 # [70]    FunctionCall      ::=   iri ArgList 
 FunctionCall = Group(iri + ArgList).setName('FunctionCall')
@@ -1338,7 +1344,7 @@ GraphPatternNotTriples = Group(GroupOrUnionGraphPattern | OptionalGraphPattern |
 SPARQLParser.addElement(GraphPatternNotTriples)
                                            
 # [55]    TriplesBlock      ::=   TriplesSameSubjectPath ( '.' TriplesBlock? )? 
-TriplesBlock = Group(separatedList(TriplesSameSubjectPath, sep='.')('subjpath') + Optional(PERIOD)).setName('TriplesBlock')
+TriplesBlock = Group(separatedList(TriplesSameSubjectPath, sep=SPARQLParser.PERIOD)('subjpath') + Optional(PERIOD)).setName('TriplesBlock')
 SPARQLParser.addElement(TriplesBlock)
 
 # [54]    GroupGraphPatternSub      ::=   TriplesBlock? ( GraphPatternNotTriples '.'? TriplesBlock? )* 
@@ -1352,7 +1358,7 @@ SPARQLParser.addElement(SubSelect)
 GroupGraphPattern << Group(LCURL + (SubSelect | GroupGraphPatternSub)('pattern') + RCURL)
 
 # [52]    TriplesTemplate   ::=   TriplesSameSubject ( '.' TriplesTemplate? )? 
-TriplesTemplate = Group(separatedList(TriplesSameSubject, sep='.') + Optional(PERIOD)).setName('TriplesTemplate')
+TriplesTemplate = Group(separatedList(TriplesSameSubject, sep=SPARQLParser.PERIOD) + Optional(PERIOD)).setName('TriplesTemplate')
 SPARQLParser.addElement(TriplesTemplate)
 
 # [51]    QuadsNotTriples   ::=   'GRAPH' VarOrIri '{' TriplesTemplate? '}' 

@@ -331,19 +331,8 @@ def separatedList(_pattern, sep):
         assert all([p.__class__._pattern == _pattern for p in parseresults]), 'internal error: _pattern mismatch ({})'.format(_pattern)
         templist = []
         for item in parseresults:
-#             if isinstance(item, ParseStruct):
-#                 item.__dict__['_label'] = label
-#                 templist.append(item)
-#             else:
-#                 assert isinstance(item, str)
-#                 templist.append(item)
-            if item.__class__.getPattern() != sep.getPattern():
-                item.__dict__['_label'] = label
-                templist.append(item)
-            else:
-                assert isinstance(item, str)
-                print('*** String encountered in makeList: {}'.format(item))
-                templist.append(item)
+            item.__dict__['_label'] = label
+            templist.append(item)
         result = []
         result.append(templist[0])
         for p in templist[1:]:

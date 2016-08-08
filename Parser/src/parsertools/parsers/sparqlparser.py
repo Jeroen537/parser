@@ -1189,7 +1189,7 @@ PathOneInPropertySet = Group(iri | TYPE | (INVERSE  + ( iri | TYPE ))).setName('
 SPARQLParser.addElement(PathOneInPropertySet)
 
 # [95]    PathNegatedPropertySet    ::=   PathOneInPropertySet | '(' ( PathOneInPropertySet ( '|' PathOneInPropertySet )* )? ')' 
-PathNegatedPropertySet = Group(PathOneInPropertySet | (LPAR + Group(Optional(separatedList(PathOneInPropertySet, sep=SPARQLParser.BAR))('pathinonepropertyset')) + RPAR)).setName('PathNegatedPropertySet')
+PathNegatedPropertySet = Group(PathOneInPropertySet | (LPAR + Group(Optional(separatedList(PathOneInPropertySet, sep=SPARQLParser.BAR)('pathinonepropertyset'))) + RPAR)).setName('PathNegatedPropertySet')
 SPARQLParser.addElement(PathNegatedPropertySet)
 
 Path = Forward().setName('Path')

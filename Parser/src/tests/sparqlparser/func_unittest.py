@@ -5,7 +5,8 @@ Created on 20 apr. 2016
 '''
 import unittest
 
-from parsertools.parsers.sparqlparser import SPARQLParser, SPARQLParseException
+from parsertools.parsers.sparqlparser import SPARQLParser, SPARQLParseException,\
+    PathNegatedPropertySet
 from parsertools.parsers.sparqlparser import stripComments, parseQuery, unescapeUcode
 
 
@@ -564,6 +565,15 @@ WHERE   { <book1>  dc:title  ?title }
     def testUnescapeUcode(self):
         s = 'abra\\U000C00AAcada\\u00AAbr\u99DDa'
         assert unescapeUcode(s) == 'abra󀂪cadaªbr駝a'
+        
+    def testSeparatedList(self):
+        s = '(^<testIri1>|^<testIri2>|^<testIri2>)'
+        r = SPARQLParser.PathNegatedPropertySet(s, postParseCheck=False)
+        bars = r.searchElements(element_type=SPARQLParser.BAR)
+        assert len(bars) == 2, len(bars)
+        labels = r.searchElements(label='pathinonepropertyset')
+        assert len(labels) == 3, len(labels)
+        
 
 
 if __name__ == "__main__":

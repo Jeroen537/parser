@@ -1,3 +1,7 @@
+Build 2835
+- corrected a labeling error in definition of PathInOnePropertySet in sparqlparser.py
+- added a separatedList test to func_unittest.py
+
 Build 2814
 - further streamlined code in base.py, no functional impact
 

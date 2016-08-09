@@ -328,7 +328,7 @@ def separatedList(_pattern, sep):
         assert len(parseresults) > 0, 'internal error'
         assert len(list((parseresults.keys()))) <= 1, 'internal error, got more than one key: {}'.format(list(parseresults.keys()))
         label = list(parseresults.keys())[0] if len(list(parseresults.keys())) == 1 else None
-        assert all([p.__class__._pattern == _pattern for p in parseresults]), 'internal error: _pattern mismatch ({})'.format(_pattern)
+#         assert all([p.__class__._pattern == _pattern for p in parseresults]), 'internal error: _pattern mismatch ({})'.format(_pattern)
         templist = []
         for item in parseresults:
             item.__dict__['_label'] = label

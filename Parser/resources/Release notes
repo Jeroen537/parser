@@ -1,3 +1,6 @@
+Build 3003
+- changed more SPARQLParser elements to use the new separatedList implementation instead of explicit repetition
+
 Build 2888
 - removed an unnecessary assertion from separatedList implementation, enabling a more elegant labeling syntax for such elements (only affects grammar definition, not parsing or dump)
 - adapted SPARQLParser elements using separatedList construct to reflect the new implementation

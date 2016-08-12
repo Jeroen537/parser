@@ -5,7 +5,7 @@ Created on 28 mrt. 2016
 '''
 from pyparsing import *
 from parsertools.base import ParseStruct, parseStructFunc, separatedList
-from parsertools import ParsertoolsException, NoPrefixError
+from parsertools import ParsertoolsException
 import rfc3987
 import re
 
@@ -1111,11 +1111,11 @@ ValueLogical = Group(RelationalExpression + Empty()).setName('ValueLogical')
 SPARQLParser.addElement(ValueLogical)
 
 # [112]   ConditionalAndExpression          ::=   ValueLogical ( '&&' ValueLogical )* 
-ConditionalAndExpression = Group(ValueLogical + ZeroOrMore(AND + ValueLogical)).setName('ConditionalAndExpression')
+ConditionalAndExpression = Group(separatedList(ValueLogical, sep=SPARQLParser.AND)).setName('ConditionalAndExpression')
 SPARQLParser.addElement(ConditionalAndExpression)
 
 # [111]   ConditionalOrExpression   ::=   ConditionalAndExpression ( '||' ConditionalAndExpression )* 
-ConditionalOrExpression = Group(ConditionalAndExpression + ZeroOrMore(OR + ConditionalAndExpression)).setName('ConditionalOrExpression')
+ConditionalOrExpression = Group(separatedList(ConditionalAndExpression, sep=SPARQLParser.OR)).setName('ConditionalOrExpression')
 SPARQLParser.addElement(ConditionalOrExpression)
 
 # [110]   Expression        ::=   ConditionalOrExpression 
@@ -1296,7 +1296,7 @@ Filter = Group(FILTER + Constraint('constraint')).setName('Filter')
 SPARQLParser.addElement(Filter)
 
 # [67]    GroupOrUnionGraphPattern          ::=   GroupGraphPattern ( 'UNION' GroupGraphPattern )* 
-GroupOrUnionGraphPattern = Group(GroupGraphPattern + ZeroOrMore(UNION + GroupGraphPattern) ).setName('GroupOrUnionGraphPattern')
+GroupOrUnionGraphPattern = Group(separatedList(GroupGraphPattern, sep=SPARQLParser.UNION)).setName('GroupOrUnionGraphPattern')
 SPARQLParser.addElement(GroupOrUnionGraphPattern)
 
 # [66]    MinusGraphPattern         ::=   'MINUS' GroupGraphPattern

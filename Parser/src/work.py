@@ -22,3 +22,5 @@ r = SPARQLParser.pat(s)
 d2 = r.dump()
 
 assert d1 == d2
+
+print(d2)

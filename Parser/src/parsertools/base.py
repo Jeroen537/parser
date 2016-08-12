@@ -341,7 +341,7 @@ def separatedList(_pattern, sep):
         return result
   
       
-    assert issubclass(sep, ParseStruct) and isinstance(sep.getPattern(), Literal) and sep.getPattern != _pattern
+    assert issubclass(sep, ParseStruct) and isinstance(sep.getPattern(), (Literal, Keyword)) and sep.getPattern != _pattern
     result = delimitedList(_pattern, sep.getPattern())
     result.setParseAction(makeList)
     return result

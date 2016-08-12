@@ -1,3 +1,6 @@
+Build 3019
+- removed a number of superfluous "Empty()" components in grammar definition
+
 Build 3003
 - changed more SPARQLParser elements to use the new separatedList implementation instead of explicit repetition
 

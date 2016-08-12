@@ -1092,7 +1092,7 @@ AdditiveExpression = Group(MultiplicativeExpression + ZeroOrMore (PLUS + Multipl
 SPARQLParser.addElement(AdditiveExpression)
 
 # [115]   NumericExpression         ::=   AdditiveExpression 
-NumericExpression = Group(AdditiveExpression + Empty()).setName('NumericExpression')
+NumericExpression = Group(AdditiveExpression).setName('NumericExpression')
 SPARQLParser.addElement(NumericExpression)
 
 # [114]   RelationalExpression      ::=   NumericExpression ( '=' NumericExpression | '!=' NumericExpression | '<' NumericExpression | '>' NumericExpression | '<=' NumericExpression | '>=' NumericExpression | 'IN' ExpressionList | 'NOT' 'IN' ExpressionList )? 
@@ -1107,7 +1107,7 @@ RelationalExpression = Group(NumericExpression + Optional( EQ + NumericExpressio
 SPARQLParser.addElement(RelationalExpression)
 
 # [113]   ValueLogical      ::=   RelationalExpression 
-ValueLogical = Group(RelationalExpression + Empty()).setName('ValueLogical')
+ValueLogical = Group(RelationalExpression).setName('ValueLogical')
 SPARQLParser.addElement(ValueLogical)
 
 # [112]   ConditionalAndExpression          ::=   ValueLogical ( '&&' ValueLogical )* 
@@ -1119,7 +1119,7 @@ ConditionalOrExpression = Group(separatedList(ConditionalAndExpression, sep=SPAR
 SPARQLParser.addElement(ConditionalOrExpression)
 
 # [110]   Expression        ::=   ConditionalOrExpression 
-Expression << Group(ConditionalOrExpression + Empty())
+Expression << Group(ConditionalOrExpression)
 
 # [109]   GraphTerm         ::=   iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | NIL 
 GraphTerm =   Group(iri | 
@@ -1181,7 +1181,7 @@ SPARQLParser.addElement(BlankNodePropertyList)
 TriplesNode << Group(Collection | BlankNodePropertyList)
 
 # [97]    Integer   ::=   INTEGER 
-Integer = Group(INTEGER + Empty()).setName('Integer')
+Integer = Group(INTEGER).setName('Integer')
 SPARQLParser.addElement(Integer)
 
 # [96]    PathOneInPropertySet      ::=   iri | 'a' | '^' ( iri | 'a' ) 
@@ -1220,10 +1220,10 @@ PathAlternative = Group(separatedList(PathSequence, sep=SPARQLParser.BAR)).setNa
 SPARQLParser.addElement(PathAlternative)
  
 # [88]    Path      ::=   PathAlternative
-Path << Group(PathAlternative + Empty())
+Path << Group(PathAlternative)
 
 # [87]    ObjectPath        ::=   GraphNodePath 
-ObjectPath = Group(GraphNodePath + Empty() ).setName('ObjectPath')
+ObjectPath = Group(GraphNodePath).setName('ObjectPath')
 SPARQLParser.addElement(ObjectPath)
 
 # [86]    ObjectListPath    ::=   ObjectPath ( ',' ObjectPath )* 
@@ -1231,15 +1231,15 @@ ObjectListPath = Group(separatedList(ObjectPath, sep=SPARQLParser.COMMA)).setNam
 SPARQLParser.addElement(ObjectListPath)
 
 # [85]    VerbSimple        ::=   Var 
-VerbSimple = Group(Var + Empty() ).setName('VerbSimple')
+VerbSimple = Group(Var).setName('VerbSimple')
 SPARQLParser.addElement(VerbSimple)
 
 # [84]    VerbPath          ::=   Path
-VerbPath = Group(Path + Empty() ).setName('VerbPath')
+VerbPath = Group(Path).setName('VerbPath')
 SPARQLParser.addElement(VerbPath)
 
 # [80]    Object    ::=   GraphNode 
-Object = Group(GraphNode + Empty() ).setName('Object')
+Object = Group(GraphNode).setName('Object')
 SPARQLParser.addElement(Object)
  
 # [79]    ObjectList        ::=   Object ( ',' Object )* 

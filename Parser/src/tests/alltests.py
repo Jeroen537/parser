@@ -10,7 +10,7 @@ import os
 from parsertools import buildfilepath, versionfilepath
 
 python = '/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5'
-# python = '/Users/jeroenbruijning/anaconda/envs/p2/bin/python'
+python = '/Users/jeroenbruijning/anaconda/envs/p2/bin/python'
 
 print('Running SPARQLParser tests')
 os.chdir('sparqlparser/reftest/fed')

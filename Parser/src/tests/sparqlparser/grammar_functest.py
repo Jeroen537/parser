@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on 24 feb. 2016
 
@@ -5,7 +6,6 @@ Created on 24 feb. 2016
 '''
 from parsertools.base import ParseResults
 from parsertools.parsers.sparqlparser import SPARQLParser
-from sympy.solvers.ode import checkinfsol
 from parsertools import NoPrefixError
 import warnings
 
@@ -26,6 +26,7 @@ import warnings
 def printResults(l, rule, dump=False):
     element = eval('SPARQLParser.' + rule)
     for s in l:
+        print(s, len(s))
         r = element._pattern.parseString(s, parseAll=True)
         while len(r) == 1 and isinstance(r[0], ParseResults):
             r = r[0]
@@ -66,7 +67,7 @@ if __name__ == '__main__':
     printResults(l, 'PLX', dump=False)
                      
     # [164]   PN_CHARS_BASE     ::=   [A-Z] | [a-z] | [#x00C0-#x00D6] | [#x00D8-#x00F6] | [#x00F8-#x02FF] | [#x0370-#x037D] | [#x037F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF] 
-    l = ['a', 'Z', '\u022D', '\u218F']
+    l = ['a', 'Z', u'\u2CDD', u'\u218F']
     printResults(l, 'PN_CHARS_BASE', dump=False)
                      
     # [165]   PN_CHARS_U        ::=   PN_CHARS_BASE | '_' 

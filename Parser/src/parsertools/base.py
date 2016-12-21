@@ -127,7 +127,7 @@ class ParseStruct:
     def setItems(self, items):
         self.__dict__['_items'] = items
     
-    def searchElements(self, *, label=None, element_type = None, value = None, labeledOnly=False):
+    def searchElements(self, label=None, element_type = None, value = None, labeledOnly=False):
         '''Returns a list of all elements with the specified search _pattern. If labeledOnly is True,
         only elements with label not None are considered for inclusion. Otherwise (the default case) all elements are considered.
         Keyword arguments label, element_type, value are used as a wildcard if None. All must be matched for an element to be included in the result.'''

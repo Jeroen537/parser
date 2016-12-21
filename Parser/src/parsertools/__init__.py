@@ -24,5 +24,5 @@ class NoPrefixError(ParsertoolsException):
 print('parsertools version {}, build {}'.format(open(versionfilepath).read().strip(), buildno))
 
 
-if sys.version_info < (3,3):
-    raise ParsertoolsException('This parser only works with Python 3.3 or later (due to unicode handling and other issues)')
+# if sys.version_info < (3,3):
+#     raise ParsertoolsException('This parser only works with Python 3.3 or later (due to unicode handling and other issues)')

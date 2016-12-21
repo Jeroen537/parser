@@ -1,3 +1,6 @@
+Build 2676
+- removed unnecessary import from grammar_functest
+
 Build 2665
 - added ParseStruct class method getPattern(), instance method __getPattern() now goes through getPattern()
 

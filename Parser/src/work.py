@@ -1,9 +1,6 @@
 from parsertools.parsers import sparqlparser 
 from parsertools.parsers.sparqlparser import SPARQLParser as SP
 
-from parsertools.parsers import sparqlparser 
-from parsertools.parsers.sparqlparser import SPARQLParser as SP
-
 q = '''
 PREFIX foaf:   <http://xmlns.com/foaf/0.1/>
 

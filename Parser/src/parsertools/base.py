@@ -6,7 +6,7 @@ Created on 3 mrt. 2016
 from pyparsing import *
 from parsertools import ParsertoolsException
 
-class ParseStruct:
+class ParseStruct(object):
     '''Parent class for all ParseStruct subclasses. These subclasses will typically correspond to productions in a given grammar,
     e.g. an EBNF grammar.'''
     
@@ -127,7 +127,7 @@ class ParseStruct:
     def setItems(self, items):
         self.__dict__['_items'] = items
     
-    def searchElements(self, *, label=None, element_type = None, value = None, labeledOnly=False):
+    def searchElements(self, label=None, element_type = None, value = None, labeledOnly=False):
         '''Returns a list of all elements with the specified search _pattern. If labeledOnly is True,
         only elements with label not None are considered for inclusion. Otherwise (the default case) all elements are considered.
         Keyword arguments label, element_type, value are used as a wildcard if None. All must be matched for an element to be included in the result.'''
@@ -167,7 +167,7 @@ class ParseStruct:
         self.createParentPointers(recursive=False)
         assert self.isValid()
     
-    def check(self, *, report = False, render=False, dump=False):
+    def check(self, report = False, render=False, dump=False):
         '''Runs various checks. Returns True if all checks pass, else False. Optionally prints a report with the check results, renders, and/or dumps itself.'''
         if report:
             print('{} renders {} expression ({})'.format(self, 'a valid' if self.yieldsValidExpression() else 'an invalid', self.__str__()))

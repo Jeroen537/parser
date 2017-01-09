@@ -5,7 +5,7 @@ Created on 28 mrt. 2016
 '''
 from pyparsing import *
 from parsertools.base import ParseStruct, parseStructFunc, separatedList
-from parsertools import ParsertoolsException, NoPrefixError
+from parsertools import ParsertoolsException, NoPrefixError, PYTHON2
 import rfc3987
 import re
 
@@ -190,8 +190,10 @@ def unescapeUcode(s):
     
     def escToUcode(s):
         assert (s[:2] == r'\u' and len(s) == 6) or (s[:2] == r'\U' and len(s) == 10)
-        return chr(int(s[2:], 16))
-                   
+        if PYTHON2:
+            return s.decode('unicode-escape')
+        else:
+            return chr(int(s[2:], 16))                   
     smallUcodePattern = r'\\u[0-9a-fA-F]{4}'
     largeUcodePattern = r'\\U[0-9a-fA-F]{8}'
     s = re.sub(smallUcodePattern, lambda x: escToUcode(x.group()), s)

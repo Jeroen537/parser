@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import unicode_literals
 '''
 Created on 24 feb. 2016
 
@@ -29,7 +31,7 @@ def printResults(l, rule, dump=False):
         r = element._pattern.parseString(s, parseAll=True)
         while len(r) == 1 and isinstance(r[0], ParseResults):
             r = r[0]
-        rendering = str(r[0])
+        rendering = r[0].__str__()
 #         try:
 #             checkIri(r[0])
 #         except NoPrefixError:

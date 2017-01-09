@@ -1,3 +1,4 @@
+
 '''
 Created on 11 mrt. 2016
 
@@ -7,10 +8,10 @@ Created on 11 mrt. 2016
 from subprocess import *
 import parsertools
 import os
-from parsertools import buildfilepath, versionfilepath
+from parsertools import buildfilepath, versionfilepath, PYTHON_VERSION
 
 python = '/Users/jeroenbruijning/anaconda/bin/python3.5'
-python = '/Users/jeroenbruijning/anaconda/envs/p2/bin/python2.7'
+python = '/opt/local/bin/python2'
 
 print('Running SPARQLParser tests')
 os.chdir('sparqlparser/reftest/fed')
@@ -32,8 +33,8 @@ print('\nRunning func_unittest test\n')
 print(check_output([python, 'func_unittest.py']).decode('utf-8'))
 print('\nRunning grammar_unittest test\n')
 print(check_output([python, 'grammar_unittest.py']).decode('utf-8'))
-print('Running N3Parser tests')
-os.chdir('../n3parser')
-print('\nRunning grammar_unittest test\n')
-print(check_output([python, 'grammar_unittest.py']).decode('utf-8'))
+# print('Running N3Parser tests')
+# os.chdir('../n3parser')
+# print('\nRunning grammar_unittest test\n')
+# print(check_output([python, 'grammar_unittest.py']).decode('utf-8'))
 print('\nAll tests finished (Version {}, Build {})'.format(open(versionfilepath).read().strip(), open(buildfilepath).read().strip()))

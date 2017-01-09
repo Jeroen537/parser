@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import unicode_literals
 '''
 Created on 28 mrt. 2016
 
@@ -5,7 +7,7 @@ Created on 28 mrt. 2016
 '''
 from pyparsing import *
 from parsertools.base import ParseStruct, parseStructFunc, separatedList
-from parsertools import ParsertoolsException, NoPrefixError
+from parsertools import ParsertoolsException, NoPrefixError, PYTHON_VERSION
 import rfc3987
 import re
 
@@ -22,7 +24,7 @@ class SPARQLParseException(ParsertoolsException):
 #
 
 class SPARQLElement(ParseStruct):
-    '''Optional subclass of ParseStruct for  the language. Typically, this class contains attributes and methods for the language that
+    '''Optional subclass of ParseStruct for the language. Typically, this class contains attributes and methods for the language that
     go beyond context free parsing, such as pre- and post processing, checking for conditions not covered by the grammar, etc.'''
     
     def __init__(self, expr, base=None, postParseCheck=True):
@@ -130,7 +132,12 @@ class Parser:
             assert issubclass(newclass, self.class_)
         else:
             newclass = self.class_ 
-        setattr(self, pattern.name, type(pattern.name, (newclass,), {'_pattern': pattern}))
+        if PYTHON_VERSION == 2:
+            patternName = str(pattern.name.encode())
+        else:
+            patternName = pattern.name
+#         print('Pattern name, type:', patternName, type(patternName))
+        setattr(self, pattern.name, type(patternName, (newclass,), {'_pattern': pattern}))
         pattern.setParseAction(parseStructFunc(getattr(self, pattern.name)))
 #
 # Create the SPARQLParser object, optionally with a custom ParseStruct subclass
@@ -189,11 +196,14 @@ def stripComments(text):
 def unescapeUcode(s):
     
     def escToUcode(s):
-        assert (s[:2] == r'\u' and len(s) == 6) or (s[:2] == r'\U' and len(s) == 10)
-        return chr(int(s[2:], 16))
-                   
-    smallUcodePattern = r'\\u[0-9a-fA-F]{4}'
-    largeUcodePattern = r'\\U[0-9a-fA-F]{8}'
+        assert (s[:2] == '\\u' and len(s) == 6) or (s[:2] == '\\U' and len(s) == 10)
+        if PYTHON_VERSION == 2:
+            return s.decode('unicode-escape')
+        else:
+            return chr(int(s[2:], 16))
+
+    smallUcodePattern = '\\\\u[0-9a-fA-F]{4}'
+    largeUcodePattern = '\\\\U[0-9a-fA-F]{8}'
     s = re.sub(smallUcodePattern, lambda x: escToUcode(x.group()), s)
     s = re.sub(largeUcodePattern, lambda x: escToUcode(x.group()), s)  
       
@@ -217,7 +227,8 @@ def getExpansion(iri):
         oldiri = iri
 #     print('found oldiri:', oldiri)
     if isinstance(oldiri, SPARQLParser.PrefixedName):
-        splitiri = str(oldiri).split(':', maxsplit=1)
+#         splitiri = str(oldiri).split(':', maxsplit=1)
+        splitiri = str(oldiri).split(':', 1)
         assert len(splitiri) == 2, splitiri
         newiristr = oldiri.getPrefixes()[splitiri[0] + ':'] + splitiri[1]
     else:

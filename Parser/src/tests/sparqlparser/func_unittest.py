@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import unicode_literals
 '''
 Created on 20 apr. 2016
 
@@ -7,6 +10,7 @@ import unittest
 
 from parsertools.parsers.sparqlparser import SPARQLParser, SPARQLParseException
 from parsertools.parsers.sparqlparser import stripComments, parseQuery, unescapeUcode
+from parsertools import unicode, PYTHON_VERSION
 
 
 class Test(unittest.TestCase):
@@ -81,6 +85,7 @@ SELECT ?p WHERE
         r = SPARQLParser.RDFLiteral(s)
         assert r.isBranch()
         assert not r.isAtom()
+        dummy = (SPARQLParser.IRIREF('<ftp://test>')).isAtom()
         assert (SPARQLParser.IRIREF('<ftp://test>')).isAtom()
         
     def testDescend(self):
@@ -560,7 +565,7 @@ WHERE   { <book1>  dc:title  ?title }
         assert str(r3) == 'BASE <http://example.org/book/> PREFIX dc: <http://purl.org/dc/elements/1.1/> SELECT $title WHERE { <http://example.org/book/book1> <http://purl.org/dc/elements/1.1/title> ?title }'
 
     def testUnescapeUcode(self):
-        s = 'abra\\U000C00AAcada\\u00AAbr\u99DDa'
+        s = 'abra\\U000C00AAcada\\u00AAbr\\u99DDa'
         assert unescapeUcode(s) == 'abra󀂪cadaªbr駝a'
 
 

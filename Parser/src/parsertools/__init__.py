@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import sys
 import getpass
 import os.path
@@ -26,3 +29,17 @@ print('parsertools version {}, build {}'.format(open(versionfilepath).read().str
 
 # if sys.version_info < (3,3):
 #     raise ParsertoolsException('This parser only works with Python 3.3 or later (due to unicode handling and other issues)')
+
+if sys.maxunicode < 1114111:
+    raise ParsertoolsException('This parser only works with wide builds of python, including all versions > 3.3 (due to unicode handling)')
+
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
+
+PYTHON_VERSION = sys.version_info.major
+
+print('Running Python ' + str(sys.version_info.major) + '.' + str(sys.version_info.minor))
+
+

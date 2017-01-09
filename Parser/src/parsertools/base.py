@@ -1,3 +1,11 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
+    
 '''
 Created on 3 mrt. 2016
 
@@ -6,7 +14,7 @@ Created on 3 mrt. 2016
 from pyparsing import *
 from parsertools import ParsertoolsException
 
-class ParseStruct:
+class ParseStruct(object):
     '''Parent class for all ParseStruct subclasses. These subclasses will typically correspond to productions in a given grammar,
     e.g. an EBNF grammar.'''
     
@@ -32,7 +40,10 @@ class ParseStruct:
         self.__dict__['_parent'] = None
         
         if not expr is None:
-            assert isinstance(expr, str), type(expr)
+#             if isinstance(expr, str):
+            if isinstance(expr, bytes):
+                expr = expr.decode()
+            assert isinstance(expr, unicode), type(expr)
             other = self.__getPattern().parseString(expr, parseAll=True)[0]
             for attr in other.__dict__:
                 self.__dict__[attr] = other.__dict__[attr]
@@ -45,7 +56,7 @@ class ParseStruct:
         This means that the labels, parent pointers etc. are not taken into account. This is because
         these are a form of annotation and/or context, separate from the parse tree in terms of resolved production rules.'''
         
-        return self.__class__ == other.__class__ and str(self) == str(other)
+        return self.__class__ == other.__class__ and self.__str__() == other.__str__()
     
     def __ne__(self, other):
         return not self == other
@@ -75,11 +86,11 @@ class ParseStruct:
         
         result = []
         for t in self._items:
-            if isinstance(t, str):
+            if isinstance(t, unicode):
                 result.append(t) 
             else:
                 assert isinstance(t, ParseStruct), '__str__: found value {} of type {} instead of ParseStruct instance'.format(t, type(t))
-                result.append(str(t))
+                result.append(t.__str__())
         return ' '.join([r for r in result if r != ''])
 
     def __getPattern(self):
@@ -96,7 +107,7 @@ class ParseStruct:
             if isinstance(p, ParseStruct):
                 result.extend(p.__getElements(labeledOnly=labeledOnly))
             else:
-                assert isinstance(p, str), type(p)
+                assert isinstance(p, unicode), type(p)
             return result
         
         def flattenList(l):
@@ -158,7 +169,7 @@ class ParseStruct:
         The parsing is done with the _pattern of the element being updated.
         This is the core function to change elements in place.'''
         
-        assert isinstance(new_content, str), 'UpdateFrom function needs a string'
+        assert isinstance(new_content, unicode), 'UpdateFrom function needs a (unicode) string'
         try:
             other = self._pattern.parseString(new_content, parseAll=True)[0]
         except ParseException:
@@ -167,7 +178,7 @@ class ParseStruct:
         self.createParentPointers(recursive=False)
         assert self.isValid()
     
-    def check(self, *, report = False, render=False, dump=False):
+    def check(self, report = False, render=False, dump=False):
         '''Runs various checks. Returns True if all checks pass, else False. Optionally prints a report with the check results, renders, and/or dumps itself.'''
         if report:
             print('{} renders {} expression ({})'.format(self, 'a valid' if self.yieldsValidExpression() else 'an invalid', self.__str__()))
@@ -224,7 +235,7 @@ class ParseStruct:
             
     def isAtom(self):
         '''Test whether the node has a string as its single descendant.'''
-        return len(self.getItems()) == 1 and isinstance(self._items[0], str)
+        return len(self.getItems()) == 1 and isinstance(self._items[0], unicode)
     
     def descend(self):
         '''Descends until either an atom or a branch node is encountered; returns that node.'''
@@ -242,10 +253,12 @@ class ParseStruct:
         def dumpItems(items, indent, step):
             result = ''
             for i in items:
-                if isinstance(i, str):
+                if isinstance(i, bytes):
+                    i = i.decode()
+                if isinstance(i, unicode):
                     result += dumpString(i, indent+step, step)
                 else:
-                    assert isinstance(i, ParseStruct) 
+                    assert isinstance(i, ParseStruct), type(i)
                     result += i.dump(indent+step, step)
             return result       
        
@@ -292,8 +305,10 @@ def parseStructFunc(class_):
         assert len(valuedict) == len(list(parseresults.items())), 'internal error: len(valuedict) = {}, len(parseresults.items) = {}'.format(len(valuedict), len(list(parseresults.items)))
         result = []
         for t in parseresults:
-            if isinstance(t, str):
+            if isinstance(t, unicode):
                 result.append(t)
+            elif isinstance(t, str):
+                result.append(t.decode())
             elif isinstance(t, ParseStruct):
                 if t.__dict__['_label'] == None:
                     t.__dict__['_label'] = valuedict.get(id(t))

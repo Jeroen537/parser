@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals, print_function
+
 '''
 Created on 24 feb. 2016
 
@@ -7,8 +10,6 @@ Created on 24 feb. 2016
 from parsertools.base import ParseResults
 from parsertools.parsers.sparqlparser import SPARQLParser
 from parsertools import NoPrefixError
-import warnings
-from __builtin__ import type
 
 # Next lines are temporary during development, to be deleted as implementions added to .grammar
 # Expression_p << Literal('"*Expression*"')
@@ -68,8 +69,6 @@ if __name__ == '__main__':
                      
     # [164]   PN_CHARS_BASE     ::=   [A-Z] | [a-z] | [#x00C0-#x00D6] | [#x00D8-#x00F6] | [#x00F8-#x02FF] | [#x0370-#x037D] | [#x037F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF] 
     l = ['\u022D', '\u218F']
-    l0 = l[0].decode('raw_unicode_escape')
-    print(l0, len(l0), type(l0))
     printResults(l, 'PN_CHARS_BASE', dump=False)
                      
     # [165]   PN_CHARS_U        ::=   PN_CHARS_BASE | '_' 

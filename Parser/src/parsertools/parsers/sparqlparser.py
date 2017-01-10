@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, print_function
+
 '''
 Created on 28 mrt. 2016
 
@@ -130,7 +132,11 @@ class Parser:
             assert issubclass(newclass, self.class_)
         else:
             newclass = self.class_ 
-        setattr(self, pattern.name, type(pattern.name, (newclass,), {'_pattern': pattern}))
+        if PYTHON2:
+            patternName = str(pattern.name.encode())
+        else:
+            patternName = pattern.name
+        setattr(self, pattern.name, type(patternName, (newclass,), {'_pattern': pattern}))
         pattern.setParseAction(parseStructFunc(getattr(self, pattern.name)))
 #
 # Create the SPARQLParser object, optionally with a custom ParseStruct subclass
@@ -189,7 +195,7 @@ def stripComments(text):
 def unescapeUcode(s):
     
     def escToUcode(s):
-        assert (s[:2] == r'\u' and len(s) == 6) or (s[:2] == r'\U' and len(s) == 10)
+        assert (s[:2] == '\\u' and len(s) == 6) or (s[:2] == '\\U' and len(s) == 10)
         if PYTHON2:
             return s.decode('unicode-escape')
         else:

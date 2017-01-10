@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals, print_function
+
 '''
 Created on 24 feb. 2016
 
@@ -6,8 +9,7 @@ Created on 24 feb. 2016
 '''
 from parsertools.base import ParseResults
 from parsertools.parsers.sparqlparser import SPARQLParser
-from parsertools import NoPrefixError
-import warnings
+from parsertools import NoPrefixError, PYTHON2
 
 # Next lines are temporary during development, to be deleted as implementions added to .grammar
 # Expression_p << Literal('"*Expression*"')
@@ -29,7 +31,10 @@ def printResults(l, rule, dump=False):
         r = element._pattern.parseString(s, parseAll=True)
         while len(r) == 1 and isinstance(r[0], ParseResults):
             r = r[0]
-        rendering = str(r[0])
+        if PYTHON2:
+            rendering = r[0].__str__()
+        else:
+            rendering = str(r[0])
 #         try:
 #             checkIri(r[0])
 #         except NoPrefixError:

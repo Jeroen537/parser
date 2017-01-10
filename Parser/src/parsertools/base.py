@@ -1,10 +1,12 @@
+from __future__ import unicode_literals, print_function
+
 '''
 Created on 3 mrt. 2016
 
 @author: jeroenbruijning
 '''
 from pyparsing import *
-from parsertools import ParsertoolsException
+from parsertools import ParsertoolsException, PYTHON2
 
 class ParseStruct(object):
     '''Parent class for all ParseStruct subclasses. These subclasses will typically correspond to productions in a given grammar,
@@ -32,7 +34,11 @@ class ParseStruct(object):
         self.__dict__['_parent'] = None
         
         if not expr is None:
-            assert isinstance(expr, str), type(expr)
+            if PYTHON2:
+                expr = expr.decode()
+                assert isinstance(expr, unicode), type(expr)
+            else:
+                assert isinstance(expr, str), type(expr)
             other = self.__getPattern().parseString(expr, parseAll=True)[0]
             for attr in other.__dict__:
                 self.__dict__[attr] = other.__dict__[attr]
@@ -75,11 +81,14 @@ class ParseStruct(object):
         
         result = []
         for t in self._items:
-            if isinstance(t, str):
+            if (PYTHON2 and isinstance(t, unicode)) or isinstance(t, str):
                 result.append(t) 
             else:
                 assert isinstance(t, ParseStruct), '__str__: found value {} of type {} instead of ParseStruct instance'.format(t, type(t))
-                result.append(str(t))
+                if PYTHON2:
+                    result.append(t.__str__())
+                else:
+                    result.append(str(t))
         return ' '.join([r for r in result if r != ''])
 
     def __getPattern(self):
@@ -292,7 +301,7 @@ def parseStructFunc(class_):
         assert len(valuedict) == len(list(parseresults.items())), 'internal error: len(valuedict) = {}, len(parseresults.items) = {}'.format(len(valuedict), len(list(parseresults.items)))
         result = []
         for t in parseresults:
-            if isinstance(t, str):
+            if (PYTHON2 and isinstance(t, unicode)) or isinstance(t, str):
                 result.append(t)
             elif isinstance(t, ParseStruct):
                 if t.__dict__['_label'] == None:

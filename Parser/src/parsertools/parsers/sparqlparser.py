@@ -225,7 +225,7 @@ def getExpansion(iri):
         oldiri = iri
 #     print('found oldiri:', oldiri)
     if isinstance(oldiri, SPARQLParser.PrefixedName):
-        splitiri = str(oldiri).split(':', maxsplit=1)
+        splitiri = str(oldiri).split(':', 1)
         assert len(splitiri) == 2, splitiri
         newiristr = oldiri.getPrefixes()[splitiri[0] + ':'] + splitiri[1]
     else:

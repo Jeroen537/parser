@@ -10,7 +10,7 @@ import os
 from parsertools import buildfilepath, versionfilepath
 
 python = '/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5'
-python = '/opt/local/bin/python2'
+python = '/opt/local/bin/python2' # wide build of python 2.7
 
 print('Running SPARQLParser tests')
 os.chdir('sparqlparser/reftest/fed')

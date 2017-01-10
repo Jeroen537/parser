@@ -1,3 +1,7 @@
+Version 0.3.0, Build 2932
+- Backported parsertools to python 2.7
+- Added a warning to use only wide builds of python (including all versions >= 3.3) when processing languages in unicode
+
 Build 2676
 - removed unnecessary import from grammar_functest
 

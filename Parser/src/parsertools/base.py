@@ -51,7 +51,10 @@ class ParseStruct(object):
         This means that the labels, parent pointers etc. are not taken into account. This is because
         these are a form of annotation and/or context, separate from the parse tree in terms of resolved production rules.'''
         
-        return self.__class__ == other.__class__ and str(self) == str(other)
+        if PYTHON2:
+            return self.__class__ == other.__class__ and self.__str__() == other.__str__()
+        else:
+            return self.__class__ == other.__class__ and str(self) == str(other)
     
     def __ne__(self, other):
         return not self == other
@@ -105,7 +108,10 @@ class ParseStruct(object):
             if isinstance(p, ParseStruct):
                 result.extend(p.__getElements(labeledOnly=labeledOnly))
             else:
-                assert isinstance(p, str), type(p)
+                if PYTHON2:
+                    assert isinstance(p, unicode), type(p)
+                else:
+                    assert isinstance(p, str), type(p)
             return result
         
         def flattenList(l):
@@ -167,7 +173,10 @@ class ParseStruct(object):
         The parsing is done with the _pattern of the element being updated.
         This is the core function to change elements in place.'''
         
-        assert isinstance(new_content, str), 'UpdateFrom function needs a string'
+        if PYTHON2:
+            assert isinstance(new_content, unicode), 'UpdateFrom function needs a (unicode) string'
+        else:
+            assert isinstance(new_content, str), 'UpdateFrom function needs a (unicode) string'
         try:
             other = self._pattern.parseString(new_content, parseAll=True)[0]
         except ParseException:
@@ -233,7 +242,10 @@ class ParseStruct(object):
             
     def isAtom(self):
         '''Test whether the node has a string as its single descendant.'''
-        return len(self.getItems()) == 1 and isinstance(self._items[0], str)
+        if PYTHON2:
+            return len(self.getItems()) == 1 and isinstance(self._items[0], unicode)
+        else:
+            return len(self.getItems()) == 1 and isinstance(self._items[0], str)
     
     def descend(self):
         '''Descends until either an atom or a branch node is encountered; returns that node.'''
@@ -251,11 +263,21 @@ class ParseStruct(object):
         def dumpItems(items, indent, step):
             result = ''
             for i in items:
-                if isinstance(i, str):
-                    result += dumpString(i, indent+step, step)
-                else:
-                    assert isinstance(i, ParseStruct) 
-                    result += i.dump(indent+step, step)
+                if PYTHON2:
+                    if isinstance(i, bytes):
+                        i = i.decode()
+                    if isinstance(i, unicode):
+                        nextResult = dumpString(i, indent+step, step)
+                    else:
+                        assert isinstance(i, ParseStruct), type(i)
+                        nextResult = i.dump(indent+step, step)
+                else:                     
+                    if isinstance(i, str):
+                        nextResult = dumpString(i, indent+step, step)
+                    else:
+                        assert isinstance(i, ParseStruct) 
+                        nextResult = i.dump(indent+step, step)
+                result += nextResult
             return result       
        
         result += indent + ('> '+ self.getLabel() + ':\n' + indent if self.getLabel() else '') + '[' + self.__class__.__name__ + '] ' + '/' + self.__str__() + '/' + '\n'

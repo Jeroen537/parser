@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals, print_function
+
 '''
 Created on 24 feb. 2016
 
@@ -26,7 +30,7 @@ from parsertools.parsers.sparqlparser import SPARQLParser
 
 class Test(unittest.TestCase):
     @classmethod
-    def makeTestFunc(self, rule, testCases, *, info=False, debug=0):
+    def makeTestFunc(self, rule, testCases, info=False, debug=0):
         element = eval('SPARQLParser.' + rule + '._pattern')
         def testFunc():
             if info:
@@ -101,8 +105,8 @@ class Test(unittest.TestCase):
         
 # [165]   PN_CHARS_U        ::=   PN_CHARS_BASE | '_' 
         
-        self.testCases['PN_CHARS_U'] = {'pass': self.testCases['PN_CHARS_BASE']['pass'].copy(),
-                                        'fail': self.testCases['PN_CHARS_BASE']['fail'].copy() }
+        self.testCases['PN_CHARS_U'] = {'pass': list(self.testCases['PN_CHARS_BASE']['pass']),
+                                        'fail': list(self.testCases['PN_CHARS_BASE']['fail']) }
         self.testCases['PN_CHARS_U']['pass'].append('_')
         self.testCases['PN_CHARS_U']['fail'].remove('_')
 

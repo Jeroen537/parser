@@ -23,14 +23,17 @@ class NoPrefixError(ParsertoolsException):
     pass
 
 assert (sys.version_info.major == 2 and sys.version_info.minor >= 7) or sys.version_info.major >=3, 'parsertools will only run on python versions >= 2.7'
-assert sys.maxunicode == 1114111, 'parsertools will only run on wide builds of python, including all versions >= 3.3'
 
-if sys.version_info.major == 2 or (sys.version_info.major == 3 and sys.version_info.minor < 3):
+WIDE_PYTHON = sys.maxunicode== 1114111
+
+if not WIDE_PYTHON:
     warnings.warn('Warning: parsertools will only function correctly on unicode languages with wide builds of python (including all versions from 3.3 on)')
 
-print('parsertools version {}, build {}, running on python {}.{}'.format(open(versionfilepath).read().strip(), buildno, sys.version_info.major, sys.version_info.minor))
-
-# if sys.version_info < (3,3):
-#     raise ParsertoolsException('This parser only works with Python 3.3 or later (due to unicode handling and other issues)')
+if WIDE_PYTHON:
+    python_width = 'wide'
+else:
+    python_width = 'narrow'
+    
+print('parsertools version {}, build {}, running on python {}.{} ({} build)'.format(open(versionfilepath).read().strip(), buildno, sys.version_info.major, sys.version_info.minor, python_width))
 
 PYTHON2 = sys.version_info.major == 2
